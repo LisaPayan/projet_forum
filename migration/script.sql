@@ -1,0 +1,52 @@
+DROP DATABASE IF EXISTS forum_souleu;
+CREATE DATABASE forum_souleu
+    DEFAULT CHARACTER SET utf8mb4
+    DEFAULT COLLATE utf8mb4_unicode_ci;
+
+USE forum_souleu;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pseudo VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    passwd VARCHAR(255) NOT NULL,
+    date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_admin INT DEFAULT 0,
+    jwt TEXT, 
+    is_ban INT DEFAULT 0
+) ENGINE=InnoDB;
+
+CREATE TABLE fils (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(100) NOT NULL,
+    statut INT DEFAULT 0,
+    score INT NOT NULL DEFAULT 0, 
+    fk_user INT NOT NULL,
+    FOREIGN KEY (fk_user) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contenu TEXT NOT NULL,
+    is_published INT DEFAULT 0,
+    date_publication DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    nbr_dislikes INT DEFAULT 0,
+    fk_user INT NOT NULL,
+    fk_fil INT NOT NULL,
+    FOREIGN KEY (fk_user) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (fk_fil) REFERENCES fils(id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE tags (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE fils_tags (
+    fk_fil INT NOT NULL,
+    fk_tag INT NOT NULL,
+    PRIMARY KEY (fk_fil, fk_tag),
+    FOREIGN KEY (fk_fil) REFERENCES fils(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (fk_tag) REFERENCES tags(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
