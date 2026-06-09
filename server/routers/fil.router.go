@@ -7,5 +7,5 @@ import (
 )
 
 func RegisterFilRoutes(r *mux.Router, filController *controllers.FilControllers) {
-
+	r.HandleFunc("/fils", filController.ReadAll).Methods("GET")
 }
