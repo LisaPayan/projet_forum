@@ -1,7 +1,7 @@
 package dto
 
-type RegisterRequest struct {
-	code int	`json:"code"`
-	message string `json:"message"`
-	userId int `json:"userId"`
+type RegisterResponseDto struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	UserId  int64  `json:"user_id"`
 }

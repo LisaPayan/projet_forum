@@ -1,7 +1,7 @@
 package dto
 
-type RegisterRequest struct {
-	pseudo string 'json:"pseudo" '
-	email  string 'json:"email" '
-	password string 'json:"password" '
+type RegisterRequestDto struct {
+	Pseudo   string `json:"pseudo"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
