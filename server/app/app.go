@@ -24,18 +24,22 @@ func InitApp() *App {
 
 	// Initilisation des repositories
 	filRepository := repositories.InitFilRepository(db)
+	autrhRepository := repositories.InitAuthRepository(db)
 
 	// Initilisation des services
 	filService := services.InitFilService(filRepository)
+	authService := services.InitAuthService(autrhRepository)
 
 	// Initilisation des controllers
 	filController := controllers.InitFilController(filService)
+	authController := controllers.InitAuthController(authService)
 
 	// Enregistrement des routes (avec ajout du préfix "/api/...")
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
 	routers.RegisterFilRoutes(router, filController)
-
+	registers.AuthRouter(router, authController)
+	
 	return &App{
 		Db:     db,
 		Router: router,
