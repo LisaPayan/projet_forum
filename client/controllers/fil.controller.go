@@ -4,6 +4,9 @@ import (
 	"client/services"
 	"client/templates"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type FilControllers struct {
@@ -17,10 +20,26 @@ func InitFilController(service *services.FilService, template *templates.Templat
 }
 
 func (c *FilControllers) DisplayList(w http.ResponseWriter, r *http.Request) {
-	productList, productErr := c.service.ReadAll()
-	if productErr != nil {
-		http.Error(w, productErr.Error(), http.StatusInternalServerError)
+	filList, filErr := c.service.ReadAll()
+	if filErr != nil {
+		http.Error(w, filErr.Error(), http.StatusInternalServerError)
 		return
 	}
-	c.template.RenderTemplate(w, r, "menu", productList)
+	c.template.RenderTemplate(w, r, "menu", filList)
+}
+
+func (c *FilControllers) DisplayMessagesFil(w http.ResponseWriter, r *http.Request) {
+	idFil, idFilErr := strconv.Atoi(mux.Vars(r)["id"])
+	if idFilErr != nil {
+		http.Error(w, "Erreur - Identifiant produit invalide", http.StatusBadRequest)
+		return
+	}
+
+	fil, filErr := c.service.ReadByIdMessages(idFil)
+	if filErr != nil {
+		http.Error(w, filErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	c.template.RenderTemplate(w, r, "details_fil", fil)
 }

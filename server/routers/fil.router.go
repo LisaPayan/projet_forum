@@ -8,4 +8,6 @@ import (
 
 func RegisterFilRoutes(r *mux.Router, filController *controllers.FilControllers) {
 	r.HandleFunc("/fils", filController.ReadAll).Methods("GET")
+	r.HandleFunc("/fil/{id}/messages", filController.GetMessagesByFil).Methods("GET")
+
 }

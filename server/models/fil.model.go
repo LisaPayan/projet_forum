@@ -5,4 +5,5 @@ type Fil struct {
 	Titre  string `json:"titre"`
 	Statut int    `json:"statut"`
 	Score  int    `json:"score"`
+	User
 }

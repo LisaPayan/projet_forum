@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -59,6 +60,25 @@ func (api *FilApi) ReadAll() ([]dto.FilDto, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(list)
 	return list, nil
+}
+
+func (api *FilApi) ReadByIdMessages(id int) ([]dto.MessageDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fil/"+strconv.Itoa(id)+"/messages", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var messages []dto.MessageDto
+
+	status, err := api.executeRequest(req, &messages)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return []dto.MessageDto{}, nil
+		}
+		return nil, err
+	}
+	fmt.Println(messages)
+	return messages, nil
 }

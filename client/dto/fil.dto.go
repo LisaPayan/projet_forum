@@ -5,4 +5,5 @@ type FilDto struct {
 	Titre  string `json:"titre"`
 	Statut int    `json:"statut"`
 	Score  int    `json:"score"`
+	UserDto
 }

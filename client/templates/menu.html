@@ -1,27 +1,69 @@
 {{define "menu"}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/menu.css">
+    <link rel="stylesheet" href="/assets/css/menu.css">
     <title>Soulèu</title>
 </head>
+
 <body>
-    <header>
-        <!-- <div>
-            <img src="../assets/img/logo.jpg">
-        </div> -->
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
+        <div class="lien">
+            <a></a>
+
+        </div>
+        <div class="connexion">
+            <a>
+                <h3>Se connecter</h3>
+            </a>
+            <a><button class="btn">S'inscrire</button></a>
+        </div>
     </header>
     <main>
-        <div>
+        <div class="page_menu">
             <div class="pres">
-                <div><h2>Bienvenue sur Soulèu !</h2></div>
-                <div><h4>le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...</h2></div>
-                <div> + fil de discussion</div>
+                <div>
+                    <h1 class="title">Bienvenue sur Soulèu !</h1>
+                </div>
+                <div>
+                    <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...
+                    </h4>
+                </div>
+                <div><button class="btn">+ fil de discussion</button></div>
+            </div>
+            <div class="cont_fils">
+                {{range .}}
+                <a href="/fil/{{.Id}}/messages" class="fil-link">
+                    <div class="fil">
+                        <div class="img_tag">
+                            <img src="/assets/img/petanque.jpg">
+                        </div>
+                        <div class="carac">
+                            <div class="title">
+                                <h2>{{.Titre}}</h2>
+                            </div>
+                            <div>{{.Pseudo}}</div>
+                        </div>
+                    </div>
+                </a>
+                {{end}}
             </div>
         </div>
     </main>
+
 </body>
+
 </html>
 {{end}}
+
+<!-- {{if eq .TagId 1}}
+   <img src="/assets/img/petanque.jpg" alt="Pétanque">
+    {{else if eq .TagId 2}}
+    <img src="/assets/img/cuisine.jpg" alt="Football">
+    {{else}}
+    <img src="/assets/img/default.jpg" alt="Autre sport">
+{{end}} -->

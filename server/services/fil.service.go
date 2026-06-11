@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"projet_forum/models"
 	"projet_forum/repositories"
 )
@@ -20,4 +21,17 @@ func (s *FilService) ReadAll() ([]models.Fil, error) {
 	}
 
 	return filsList, nil
+}
+
+func (s *FilService) FilByIdMessages(idFil int) ([]models.Message, error) {
+	if idFil <= 0 {
+		return []models.Message{}, fmt.Errorf(" Erreur récupération produit - identifiant invalide : %d", idFil)
+	}
+
+	fil, filErr := s.filRepository.FilByIdMessages(idFil)
+	if filErr != nil {
+		return []models.Message{}, filErr
+	}
+
+	return fil, nil
 }
