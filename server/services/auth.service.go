@@ -12,66 +12,70 @@ import (
 )
 
 type AuthService struct {
-	authRepo *repositories.AuthRepository
+	authRepository *repositories.AuthRepository
 }
 
-func initAuthService(authRepo *repositories.AuthRepository) *AuthService {
-	return	&AuthService{authRepo: authRepo}
+func InitAuthService(authRepository *repositories.AuthRepository) *AuthService {
+	return &AuthService{authRepository: authRepository}
 }
 
-func (s *AuthService) Register(request dto.RegisterRequestdto) (dto.RegisterResponsedto, error) {
-	data.pseudo = strings.TrimSpace(data.pseudo)
-	data.email = strings.TrimSpace(data.email)
+func (s *AuthService) Register(data dto.RegisterRequestDto) (*dto.RegisterResponseDto, error) {
+	data.Pseudo = strings.TrimSpace(data.Pseudo)
+	data.Email = strings.TrimSpace(data.Email)
 
-	if data.pseudo == "" || data.email == "" || data.password == "" {
-		return nil, errors.New("pseudo, email et mot de passe sont requis")
+	if data.Pseudo == "" || data.Email == "" || data.Password == "" {
+		return nil, errors.New("tous les champs sont obligatoires")
 	}
 
-if !validpassword(data.password) {
-	return nil ,errors.New("mot de passe invalide")
+	if !isPasswordValid(data.Password) {
+		return nil, errors.New("le mot de passe doit contenir au minimum 12 caracteres, une majuscule et un caractere special")
+	}
+
+	exists, err := s.authRepository.UserExists(data.Pseudo, data.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if exists {
+		return nil, errors.New("pseudo ou email deja utilise")
+	}
+
+	hashedPassword := hashPassword(data.Password)
+
+	userId, err := s.authRepository.Register(data.Pseudo, data.Email, hashedPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.RegisterResponseDto{
+		Code:    http.StatusCreated,
+		Message: "utilisateur inscrit avec succes",
+		UserId:  userId,
+	}, nil
 }
 
-exists, err := s.authRepo.userexists(data.pseudo, data.email)
-if err != nil {
-	return nil, err
-}
-
-if exists {
-	return nil, errors.New("pseudo ou email déjà utilisé")
-}
-
-hashedPassword := hashPassword(data.password)
-
-userId, err := s.authRepo.createUser(data.pseudo, data.email, hashedPassword)
-if err != nil {
-	return nil, err
-}
-
-return dto.RegisterResponsedto{
-	code: http.StatusCreated,
-	message: "Utilisateur inscrit avec succès",
-	userId: userId,
-}, nil
-}
-
-func validpassword(password string) bool {
-	if len(password) <8 {
+func isPasswordValid(password string) bool {
+	if len(password) < 12 {
 		return false
 	}
 
-hasupper := false
-haspecial := false
+	hasUpper := false
+	hasSpecial := false
 
-for _, char := range password {
-	if unicode.IsUpper(char) {
-		hasupper = true
+	for _, char := range password {
+		if unicode.IsUpper(char) {
+			hasUpper = true
+		}
+
+		if unicode.IsPunct(char) || unicode.IsSymbol(char) {
+			hasSpecial = true
+		}
 	}
-}
-	return hasupper && haspecial
+
+	return hasUpper && hasSpecial
 }
 
 func hashPassword(password string) string {
-	hash := sha512.New()
-	hash.Write([]byte(password))
-	return hex.EncodeToString(hash.Sum(nil))
+	hash := sha512.Sum512([]byte(password))
+	return hex.EncodeToString(hash[:])
 }

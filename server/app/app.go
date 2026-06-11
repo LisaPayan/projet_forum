@@ -17,29 +17,28 @@ type App struct {
 }
 
 func InitApp() *App {
-
 	config.LoadEnv()
 
 	db := config.InitDB()
 
-	// Initilisation des repositories
+	// Initialisation des repositories
 	filRepository := repositories.InitFilRepository(db)
-	autrhRepository := repositories.InitAuthRepository(db)
+	authRepository := repositories.InitAuthRepository(db)
 
-	// Initilisation des services
+	// Initialisation des services
 	filService := services.InitFilService(filRepository)
-	authService := services.InitAuthService(autrhRepository)
+	authService := services.InitAuthService(authRepository)
 
-	// Initilisation des controllers
+	// Initialisation des controllers
 	filController := controllers.InitFilController(filService)
 	authController := controllers.InitAuthController(authService)
 
-	// Enregistrement des routes (avec ajout du préfix "/api/...")
+	// Enregistrement des routes avec le prefixe /api
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
 	routers.RegisterFilRoutes(router, filController)
-	registers.AuthRouter(router, authController)
-	
+	routers.AuthRoutes(router, authController)
+
 	return &App{
 		Db:     db,
 		Router: router,
