@@ -39,7 +39,13 @@
                 {{range .}}
                     <div class="fil">
                         <div class="img_tag">
+                            {{if eq .Tag_c.Id 1}}
                             <img src="/assets/img/petanque.jpg">
+                            {{else if eq .Tag_c.Id 2}}
+                            <img src="/assets/img/cuisine.jpg">
+                            {{else}}
+                            <img src="/assets/img/nature.jpg">
+                            {{end}}
                         </div>
                         <div class="carac">
                             <div class="title">

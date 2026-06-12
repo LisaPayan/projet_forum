@@ -40,7 +40,7 @@ func (r *FilRepository) CreateFil(fil models.Fil, message models.Message) (int, 
 func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	var listFils []models.Fil
 
-	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo FROM fils f LEFT JOIN users u ON f.fk_user = u.id WHERE f.statut != 'archivé';")
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé';")
 
 	if sqlErr != nil {
 		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
@@ -49,7 +49,7 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	for sqlResult.Next() {
 		var fil models.Fil
 
-		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo)
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id)
 		if errScan != nil {
 			continue
 		}
@@ -61,8 +61,8 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 
-	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.Titre FROM messages m INNER JOIN users u ON m.fk_user = u.id INNER JOIN fils f ON m.fk_fil = f.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
-	// m.nbr_likes,
+	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
+
 	sqlResult, sqlErr := r.db.Query(query, idFil)
 	if sqlErr != nil {
 		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
@@ -71,7 +71,7 @@ func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	for sqlResult.Next() {
 		var message models.Message
 
-		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil.Titre)
+		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
 		if errScan != nil {
 			continue
 		}

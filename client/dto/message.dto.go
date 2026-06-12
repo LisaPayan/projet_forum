@@ -5,5 +5,5 @@ type MessageDto struct {
 	Contenu     string  `json:"contenu"`
 	PublishedAt string  `json:"date_publication"`
 	User_c      UserDto `json:"user_c"`
-	FilDto
+	Fil_c       FilDto  `json:"fil_c"`
 }
