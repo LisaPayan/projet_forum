@@ -1,6 +1,6 @@
-package models
+package dto
 
-type Tag struct {
+type TagDto struct {
 	Id          int    `json:"id"`
 	Nom         string `json:"nom"`
 	Description string `json:"description"`

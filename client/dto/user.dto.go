@@ -1,9 +1,9 @@
-package models
+package dto
 
-type User struct {
+type UserDto struct {
 	Id       int    `json:"id"`
 	Pseudo   string `json:"pseudo"`
-	Email     string `json:"email"`
+	Mail     string `json:"email"`
 	Passwd   string `json:"passwd"`
 	CreateAt string `json:"date_inscription"`
 	IsAdmin  int    `json:"is_admin"`

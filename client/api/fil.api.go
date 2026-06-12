@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -59,6 +60,69 @@ func (api *FilApi) ReadAll() ([]dto.FilDto, error) {
 	if err != nil {
 		return nil, err
 	}
+	return list, nil
+}
 
+func (api *FilApi) ReadByIdMessages(id int) ([]dto.MessageDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fil/"+strconv.Itoa(id)+"/messages", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var messages []dto.MessageDto
+
+	status, err := api.executeRequest(req, &messages)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return []dto.MessageDto{}, nil
+		}
+		return nil, err
+	}
+	fmt.Println(messages)
+	return messages, nil
+}
+
+func (api *FilApi) FilsPetanque() ([]dto.FilDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils/petanque", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []dto.FilDto
+	_, err = api.executeRequest(req, &list)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(list)
+	return list, nil
+}
+
+func (api *FilApi) FilsCuisine() ([]dto.FilDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils/cuisine", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []dto.FilDto
+	_, err = api.executeRequest(req, &list)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(list)
+	return list, nil
+}
+
+func (api *FilApi) FilsNature() ([]dto.FilDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils/nature", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []dto.FilDto
+	_, err = api.executeRequest(req, &list)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(list)
 	return list, nil
 }

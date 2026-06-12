@@ -2,8 +2,8 @@ package models
 
 type Message struct {
 	Id          int    `json:"id"`
-	IsPublished int    `json:"is_published"`
+	Contenu     string `json:"contenu"`
 	PublishedAt string `json:"date_publication"`
-	NbrLikes    int    `json:"nbr_likes"`
-	NbrDislikes int    `json:"nbr_dislikes"`
+	User_c      User   `json:"user_c"`
+	Fil_c       Fil    `json:"fil_c"`
 }
