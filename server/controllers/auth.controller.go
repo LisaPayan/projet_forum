@@ -32,3 +32,21 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteJSON(w, http.StatusCreated, response)
 }
+
+func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
+	var data dto.LoginRequestDto
+
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+		return
+	}
+
+	response, err := c.service.Login(data)
+	if err != nil {
+		helper.WriteError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, response)
+}
+
