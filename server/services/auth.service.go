@@ -79,3 +79,72 @@ func hashPassword(password string) string {
 	hash := sha512.Sum512([]byte(password))
 	return hex.EncodeToString(hash[:])
 }
+
+func (s *AuthService) Login(data dto.LoginRequestDto) (*dto.LoginResponseDto, error) {
+	data.username = strings.TrimSpace(data.username)
+
+	if data.username == "" || data.Password == "" {
+		return nil, errors.New("identifiant et mot de passe requis")
+		
+	}
+
+	user, err := s.authRepository.Findbyusernameormail(data.username)
+	if err != nil {
+		return nil, errors.New("identifiant ou mot de passe invalide")
+	}
+
+	if user.IsBanned {
+		return nil, errors.New("compte banni")
+	}
+
+	hashedPassword := hashPassword(data.Password)
+	if hashedPassword != user.Password {
+		return nil, errors.New("identifiant ou mot de passe invalide")
+	}
+
+	role := "user"
+	if user.IsAdmin == 1 {
+		role = "admin"
+	}
+
+	token, err := auth.generateToken(strconv.Itoa(user.ID), role)
+	if err != nil {
+		return nill ,err
+	}
+
+	err = s.authRepository.SaveToken(user.ID, token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.loginresponsedto{
+		Type : "bearer",
+		accessToken : token,
+		ExpiresIn : 900,
+	}, nil
+}
+
+func isPasswordValid(password string) bool {
+	if len (password) < 12 {
+		return false
+	}
+	 hasUpper := false
+	 hasSpecial := false
+
+	 for _char := range password {
+		if unicode.isUpper(char) {
+			hasUpper = true
+		}
+
+		if unicode.isPunct(char) || unicode.isSymbol(char) {
+			haspecial = true
+		}
+	 }
+
+	 return hasUpper && hasSpecial
+}
+
+func hashPassword(password string) string {
+	hash := sha512.Sum512([]byte(password))
+	return hex.EncodeToString(hash[:])
+}
