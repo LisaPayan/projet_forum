@@ -55,3 +55,36 @@ func (c *FilControllers) GetMessagesByFil(w http.ResponseWriter, r *http.Request
 	fmt.Println(messagesList)
 
 }
+
+func (c *FilControllers) FilsPetanque(w http.ResponseWriter, r *http.Request) {
+	filsList, filsErr := c.service.FilsPetanque()
+	if filsErr != nil {
+		helper.WriteError(w, http.StatusInternalServerError, filsErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, filsList)
+	fmt.Println(filsList)
+}
+
+func (c *FilControllers) FilsCuisine(w http.ResponseWriter, r *http.Request) {
+	filsList, filsErr := c.service.FilsCuisine()
+	if filsErr != nil {
+		helper.WriteError(w, http.StatusInternalServerError, filsErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, filsList)
+	fmt.Println(filsList)
+}
+
+func (c *FilControllers) FilsNature(w http.ResponseWriter, r *http.Request) {
+	filsList, filsErr := c.service.FilsNature()
+	if filsErr != nil {
+		helper.WriteError(w, http.StatusInternalServerError, filsErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, filsList)
+	fmt.Println(filsList)
+}

@@ -10,8 +10,8 @@ body {
 .menu {
     height: 12vh;
     width: 100vw;
-    top:0;
-    position: fixed;
+    position: relative;
+    /* position: fixed; */
     display: flex;
     flex-direction: row;
 }
@@ -71,7 +71,7 @@ body {
 
 
 .page_menu {
-    margin-top: 12vh;
+    
     min-height: 88vh;
 }
 
@@ -126,7 +126,23 @@ body {
     object-position: center;
 }
 
+.carac {
+    display: flex;
+    flex-direction: column;
+    gap:6px;
+}
+
 .title {
     color: #0052CC;
     margin-left: 5px;
+}
+
+.title a, .title a:visited, .title a:hover {
+    text-decoration: none; 
+    color: #0052CC;       
+}
+
+.title a h2 {
+    text-decoration: none;
+    margin: 0; 
 }

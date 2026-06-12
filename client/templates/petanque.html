@@ -1,4 +1,4 @@
-{{define "menu"}}
+{{define "petanque"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
-    <title>Soulèu</title>
+    <title>{{ (index . 0).Tag_c.Nom }}</title>
 </head>
 
 <body>
@@ -27,11 +27,10 @@
         <div class="page_menu">
             <div class="pres">
                 <div>
-                    <h1 class="title">Bienvenue sur Soulèu !</h1>
+                    <h1 class="title">{{ (index . 0).Tag_c.Nom }}</h1>
                 </div>
                 <div>
-                    <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...
-                    </h4>
+                    <h4>{{ (index . 0).Tag_c.Description }}</h4>
                 </div>
                 <div><button class="btn">+ fil de discussion</button></div>
             </div>
@@ -56,11 +55,3 @@
 
 </html>
 {{end}}
-
-<!-- {{if eq .TagId 1}}
-   <img src="/assets/img/petanque.jpg" alt="Pétanque">
-    {{else if eq .TagId 2}}
-    <img src="/assets/img/cuisine.jpg" alt="Football">
-    {{else}}
-    <img src="/assets/img/default.jpg" alt="Autre sport">
-{{end}} -->

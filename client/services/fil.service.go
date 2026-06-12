@@ -25,3 +25,15 @@ func (s *FilService) ReadByIdMessages(idFil int) ([]dto.MessageDto, error) {
 
 	return s.filApi.ReadByIdMessages(idFil)
 }
+
+func (s *FilService) FilsPetanque() ([]dto.FilDto, error) {
+	return s.filApi.FilsPetanque()
+}
+
+func (s *FilService) FilsCuisine() ([]dto.FilDto, error) {
+	return s.filApi.FilsCuisine()
+}
+
+func (s *FilService) FilsNature() ([]dto.FilDto, error) {
+	return s.filApi.FilsNature()
+}

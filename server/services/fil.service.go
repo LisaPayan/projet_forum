@@ -35,3 +35,30 @@ func (s *FilService) FilByIdMessages(idFil int) ([]models.Message, error) {
 
 	return fil, nil
 }
+
+func (s *FilService) FilsPetanque() ([]models.Fil, error) {
+	filsList, filsErr := s.filRepository.FilsPetanque()
+	if filsErr != nil {
+		return nil, filsErr
+	}
+
+	return filsList, nil
+}
+
+func (s *FilService) FilsCuisine() ([]models.Fil, error) {
+	filsList, filsErr := s.filRepository.FilsCuisine()
+	if filsErr != nil {
+		return nil, filsErr
+	}
+
+	return filsList, nil
+}
+
+func (s *FilService) FilsNature() ([]models.Fil, error) {
+	filsList, filsErr := s.filRepository.FilsNature()
+	if filsErr != nil {
+		return nil, filsErr
+	}
+
+	return filsList, nil
+}

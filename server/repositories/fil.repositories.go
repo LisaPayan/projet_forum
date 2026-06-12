@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"projet_forum/models"
+	"time"
 )
 
 type FilRepository struct {
@@ -14,10 +15,33 @@ func InitFilRepository(db *sql.DB) *FilRepository {
 	return &FilRepository{db}
 }
 
+func (r *FilRepository) CreateFil(fil models.Fil, message models.Message) (int, error) {
+	query := "INSERT INTO `fils` (`titre`) INSERT INTO `messages` ()"
+
+	sqlResult, sqlErr := r.db.Exec(query,
+		fil.Titre,
+		fil.User_c.Id,
+		message.Contenu,
+		time.Now().Format("2006-01-02 15:04:05"),
+	)
+
+	if sqlErr != nil {
+		return -1, fmt.Errorf(" Erreur ajout produit - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	id, idErr := sqlResult.LastInsertId()
+	if idErr != nil {
+		return -1, fmt.Errorf(" Erreur ajout produit - Erreur récupération identifiant : \n\t %s", idErr.Error())
+	}
+
+	return int(id), nil
+}
+
 func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	var listFils []models.Fil
 
-	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo FROM fils f INNER JOIN users u ON f.fk_user = u.id WHERE f.statut != 2;")
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo FROM fils f LEFT JOIN users u ON f.fk_user = u.id WHERE f.statut != 'archivé';")
+
 	if sqlErr != nil {
 		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
 	}
@@ -25,7 +49,7 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	for sqlResult.Next() {
 		var fil models.Fil
 
-		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User.Pseudo)
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo)
 		if errScan != nil {
 			continue
 		}
@@ -37,7 +61,7 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 
-	query := "SELECT m.id, m.contenu, m.is_published, m.date_publication, m.nbr_dislikes, u.pseudo, f.Titre FROM messages m INNER JOIN users u ON m.fk_user = u.id INNER JOIN fils f ON m.fk_fil = f.id WHERE m.fk_fil = ? AND m.is_published = 1 ORDER BY m.date_publication ASC; "
+	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.Titre FROM messages m INNER JOIN users u ON m.fk_user = u.id INNER JOIN fils f ON m.fk_fil = f.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
 	// m.nbr_likes,
 	sqlResult, sqlErr := r.db.Query(query, idFil)
 	if sqlErr != nil {
@@ -47,12 +71,74 @@ func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	for sqlResult.Next() {
 		var message models.Message
 
-		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.IsPublished, &message.PublishedAt, &message.NbrDislikes, &message.User_c.Pseudo, &message.Fil.Titre)
-		// &message.NbrLikes,
+		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil.Titre)
 		if errScan != nil {
 			continue
 		}
 		listMessages = append(listMessages, message)
 	}
 	return listMessages, nil
+}
+
+func (r *FilRepository) FilsPetanque() ([]models.Fil, error) {
+	var listFils []models.Fil
+
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id, t.nom, t.description FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé' AND t.id = 1;")
+
+	if sqlErr != nil {
+		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
+	}
+	defer sqlResult.Close()
+	for sqlResult.Next() {
+		var fil models.Fil
+
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id, &fil.Tag_c.Nom, &fil.Tag_c.Description)
+		if errScan != nil {
+			continue
+		}
+		listFils = append(listFils, fil)
+	}
+	return listFils, nil
+}
+
+func (r *FilRepository) FilsCuisine() ([]models.Fil, error) {
+	var listFils []models.Fil
+
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id, t.nom, t.description FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé' AND t.id = 2;")
+
+	if sqlErr != nil {
+		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
+	}
+	defer sqlResult.Close()
+	for sqlResult.Next() {
+		var fil models.Fil
+
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id, &fil.Tag_c.Nom, &fil.Tag_c.Description)
+		if errScan != nil {
+			continue
+		}
+		listFils = append(listFils, fil)
+	}
+	return listFils, nil
+}
+
+func (r *FilRepository) FilsNature() ([]models.Fil, error) {
+	var listFils []models.Fil
+
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id, t.nom, t.description FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé' AND t.id = 3;")
+
+	if sqlErr != nil {
+		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
+	}
+	defer sqlResult.Close()
+	for sqlResult.Next() {
+		var fil models.Fil
+
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id, &fil.Tag_c.Nom, &fil.Tag_c.Description)
+		if errScan != nil {
+			continue
+		}
+		listFils = append(listFils, fil)
+	}
+	return listFils, nil
 }
