@@ -6,6 +6,7 @@ import (
 	"projet_forum/dto"
 	"projet_forum/helper"
 	"projet_forum/services"
+	"strings"
 )
 
 type AuthController struct {
@@ -19,8 +20,8 @@ func InitAuthController(authService *services.AuthService) *AuthController {
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	var data dto.RegisterRequestDto
 
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+	if err := readRegisterRequest(r, &data); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -36,8 +37,8 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	var data dto.LoginRequestDto
 
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+	if err := readLoginRequest(r, &data); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -48,4 +49,39 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteJSON(w, http.StatusOK, response)
+}
+
+func readRegisterRequest(r *http.Request, data *dto.RegisterRequestDto) error {
+	contentType := r.Header.Get("Content-Type")
+
+	if strings.Contains(contentType, "application/json") {
+		return json.NewDecoder(r.Body).Decode(data)
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+
+	data.Pseudo = r.FormValue("pseudo")
+	data.Email = r.FormValue("email")
+	data.Password = r.FormValue("password")
+
+	return nil
+}
+
+func readLoginRequest(r *http.Request, data *dto.LoginRequestDto) error {
+	contentType := r.Header.Get("Content-Type")
+
+	if strings.Contains(contentType, "application/json") {
+		return json.NewDecoder(r.Body).Decode(data)
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+
+	data.Username = r.FormValue("username")
+	data.Password = r.FormValue("password")
+
+	return nil
 }
