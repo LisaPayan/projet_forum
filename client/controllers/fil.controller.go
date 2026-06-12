@@ -72,3 +72,53 @@ func (c *FilControllers) DisplayListNature(w http.ResponseWriter, r *http.Reques
 	}
 	c.template.RenderTemplate(w, r, "nature", filList)
 }
+
+// func (c *FilControllers) DisplayPagination(w http.ResponseWriter, r *http.Request) {
+// 	pageStr := r.FormValue("page")
+// 	pageInt, _ := strconv.Atoi(pageStr)
+
+// 	if pageInt < 0 {
+// 		pageInt = 0
+// 	}
+
+// 	startIndex := pageInt * 15
+// 	endIndex := startIndex + 15
+
+// 	data, err := c.service.ReadAll()
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	if startIndex >= len(data) {
+// 		pageInt = 0
+// 		startIndex = 0
+// 		endIndex = 15
+// 	}
+
+// 	if endIndex > len(data) {
+// 		endIndex = len(data)
+// 	}
+
+// 	SelectCountries := data[startIndex:endIndex]
+
+// 	prevPage := pageInt - 1
+// 	if prevPage < 0 {
+// 		prevPage = 0
+// 	}
+
+// 	nextPage := pageInt
+// 	if endIndex < len(data) {
+// 		nextPage = pageInt + 1
+// 	}
+
+// 	vieData := dto.PagePagination{
+// 		Page: pageInt,
+// 		Next: nextPage,
+// 		Prev: prevPage,
+// 		Data: SelectCountries,
+// 	}
+
+// 	c.template.RenderTemplate(w, r, "menu", vieData)
+
+// }
