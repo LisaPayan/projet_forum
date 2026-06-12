@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"projet_forum/models"
 )
 
 type AuthRepository struct {
@@ -44,33 +45,34 @@ func (r *AuthRepository) Register(pseudo string, email string, password string) 
 	return result.LastInsertId()
 }
 
-func (r *AuthRepository) Findbyusernameormail(username string) (*models.user , error) {
-	var user models.user
+func (r *AuthRepository) FindByUsernameOrEmail(username string) (*models.User, error) {
+	var user models.User
 
 	err := r.db.QueryRow(
-		"Select id , pseudo email , passwd , is_admin , is_ban From users where pseudo = ? or email = ?",
+		"SELECT id, pseudo, email, passwd, is_admin, is_ban FROM users WHERE pseudo = ? OR email = ?",
 		username,
 		username,
-	).Scan
-	&user.id,
-	&user.pseudo,
-	&user.email,
-	&user.password,
-	&user.isAdmin,
-	&user.isBan,
+	).Scan(
+		&user.Id,
+		&user.Pseudo,
+		&user.Mail,
+		&user.Passwd,
+		&user.IsAdmin,
+		&user.IsBan,
 	)
 
 	if err != nil {
-		return nil , fmt.Errorf("utilisateur introuvable")
+		return nil, fmt.Errorf("utilisateur introuvable")
 	}
 
 	return &user, nil
 }
-func (r *Authrepository) SaveToken(userid int , token string ) error {
+
+func (r *AuthRepository) SaveToken(userID int, token string) error {
 	_, err := r.db.Exec(
-		"Update users set jwt = ? where id = ?",
+		"UPDATE users SET jwt = ? WHERE id = ?",
 		token,
-		userid,
+		userID,
 	)
 
 	if err != nil {

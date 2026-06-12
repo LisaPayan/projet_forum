@@ -7,6 +7,8 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1 // indirect
 )
-	
-require filippo.io/edwards25519 v1.2.0 // indirect
 
+require (
+	filippo.io/edwards25519 v1.2.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+)
