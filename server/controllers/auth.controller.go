@@ -49,4 +49,3 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 
 	helper.WriteJSON(w, http.StatusOK, response)
 }
-
