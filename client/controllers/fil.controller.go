@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"client/dto"
 	"client/services"
 	"client/templates"
 	"fmt"
@@ -73,52 +74,52 @@ func (c *FilControllers) DisplayListNature(w http.ResponseWriter, r *http.Reques
 	c.template.RenderTemplate(w, r, "nature", filList)
 }
 
-// func (c *FilControllers) DisplayPagination(w http.ResponseWriter, r *http.Request) {
-// 	pageStr := r.FormValue("page")
-// 	pageInt, _ := strconv.Atoi(pageStr)
+func (c *FilControllers) DisplayPagination(w http.ResponseWriter, r *http.Request) {
+	pageStr := r.FormValue("page")
+	pageInt, _ := strconv.Atoi(pageStr)
 
-// 	if pageInt < 0 {
-// 		pageInt = 0
-// 	}
+	if pageInt < 0 {
+		pageInt = 0
+	}
 
-// 	startIndex := pageInt * 15
-// 	endIndex := startIndex + 15
+	startIndex := pageInt * 10
+	endIndex := startIndex + 10
 
-// 	data, err := c.service.ReadAll()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	data, err := c.service.ReadAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	if startIndex >= len(data) {
-// 		pageInt = 0
-// 		startIndex = 0
-// 		endIndex = 15
-// 	}
+	if startIndex >= len(data) {
+		pageInt = 0
+		startIndex = 0
+		endIndex = 10
+	}
 
-// 	if endIndex > len(data) {
-// 		endIndex = len(data)
-// 	}
+	if endIndex > len(data) {
+		endIndex = len(data)
+	}
 
-// 	SelectCountries := data[startIndex:endIndex]
+	SelectCountries := data[startIndex:endIndex]
 
-// 	prevPage := pageInt - 1
-// 	if prevPage < 0 {
-// 		prevPage = 0
-// 	}
+	prevPage := pageInt - 1
+	if prevPage < 0 {
+		prevPage = 0
+	}
 
-// 	nextPage := pageInt
-// 	if endIndex < len(data) {
-// 		nextPage = pageInt + 1
-// 	}
+	nextPage := pageInt
+	if endIndex < len(data) {
+		nextPage = pageInt + 1
+	}
 
-// 	vieData := dto.PagePagination{
-// 		Page: pageInt,
-// 		Next: nextPage,
-// 		Prev: prevPage,
-// 		Data: SelectCountries,
-// 	}
+	vieData := dto.PagePagination{
+		Page: pageInt,
+		Next: nextPage,
+		Prev: prevPage,
+		Data: SelectCountries,
+	}
 
-// 	c.template.RenderTemplate(w, r, "menu", vieData)
+	c.template.RenderTemplate(w, r, "all", vieData)
 
-// }
+}

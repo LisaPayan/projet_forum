@@ -15,14 +15,13 @@ func InitFilRepository(db *sql.DB) *FilRepository {
 	return &FilRepository{db}
 }
 
-func (r *FilRepository) CreateFil(fil models.Fil, message models.Message) (int, error) {
-	query := "INSERT INTO `fils` (`titre`) INSERT INTO `messages` ()"
+func (r *FilRepository) CreateFil(fil models.Fil) (int, error) {
+	query := "INSERT INTO `fils` (`titre`, `fk_user`, `fk_tag`) VALUES (?,?,?);"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		fil.Titre,
 		fil.User_c.Id,
-		message.Contenu,
-		time.Now().Format("2006-01-02 15:04:05"),
+		fil.Tag_c.Id,
 	)
 
 	if sqlErr != nil {
@@ -78,6 +77,28 @@ func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 		listMessages = append(listMessages, message)
 	}
 	return listMessages, nil
+}
+
+func (r *FilRepository) CreateMessageFil(message models.Message) (int, error) {
+	query := "INSERT INTO `messages` (`contenu`, `date_publication`, `fk_user, fk_fil`) VALUES (?,?,?,?);"
+
+	sqlResult, sqlErr := r.db.Exec(query,
+		message.Contenu,
+		time.Now().Format("2006-01-02 15:04:05"),
+		message.User_c.Id,
+		message.Fil_c.Id,
+	)
+
+	if sqlErr != nil {
+		return -1, fmt.Errorf(" Erreur ajout produit - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	id, idErr := sqlResult.LastInsertId()
+	if idErr != nil {
+		return -1, fmt.Errorf(" Erreur ajout produit - Erreur récupération identifiant : \n\t %s", idErr.Error())
+	}
+
+	return int(id), nil
 }
 
 func (r *FilRepository) FilsPetanque() ([]models.Fil, error) {

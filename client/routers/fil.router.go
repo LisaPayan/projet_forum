@@ -8,7 +8,7 @@ import (
 
 func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControllers) {
 	r.HandleFunc("/", filController.DisplayList).Methods("GET")
-	// r.HandleFunc("/", filController.DisplayPagination).Methods("GET")
+	r.HandleFunc("/all", filController.DisplayPagination).Methods("GET")
 	r.HandleFunc("/fils/petanque", filController.DisplayListPetanque).Methods("GET")
 	r.HandleFunc("/fils/cuisine", filController.DisplayListCuisine).Methods("GET")
 	r.HandleFunc("/fils/nature", filController.DisplayListNature).Methods("GET")

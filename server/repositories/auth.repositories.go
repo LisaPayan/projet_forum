@@ -55,7 +55,7 @@ func (r *AuthRepository) FindByUsernameOrEmail(username string) (*models.User, e
 	).Scan(
 		&user.Id,
 		&user.Pseudo,
-		&user.Mail,
+		&user.Email,
 		&user.Passwd,
 		&user.IsAdmin,
 		&user.IsBan,

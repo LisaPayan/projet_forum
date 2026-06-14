@@ -13,8 +13,14 @@
     <header class="menu">
         <div class="logo"><img src="../assets/img/logo.jpg"></div>
         <div class="lien">
-            <a></a>
-
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque">Pétanque</a>
+                    <a href="/fils/cuisine">Cuisine</a>
+                    <a href="/fils/nature">Nature</a>
+                </div>
+            </div>
         </div>
         <div class="connexion">
             <a>
@@ -23,6 +29,34 @@
             <a><button class="btn">S'inscrire</button></a>
         </div>
     </header>
+
+    <div id="create-fil-form" class="form">
+        <div class="form-content">
+            <span class="close-btn" onclick="closeFormFil()">x</span>
+
+            <h2>Créer un nouveau fil de discussion</h2>
+
+            <form action="/fils/create" method="POST">
+                <div class="form-group">
+                    <label for="titre">Titre du fil :</label>
+                    <input type="text" id="titre" name="titre" required
+                        placeholder="Ex: Les meilleurs coins à champignons">
+                </div>
+
+                <div class="form-group">
+                    <label for="tag_id">Choisir un sujet :</label>
+                    <select name="tag_id" id="tag_id" required>
+                        <option value="1">Pétanque</option>
+                        <option value="2">Cuisine</option>
+                        <option value="3">Nature</option>
+                    </select>
+                </div>
+                <div class="indic">* Vous devez être authentifié pour créer un fil</div>
+                <button type="submit" class="btn">Publier le fil</button>
+            </form>
+        </div>
+    </div>
+
     <main>
         <div class="page_menu">
             <div class="pres">
@@ -33,40 +67,38 @@
                     <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...
                     </h4>
                 </div>
-                <div><button class="btn">+ fil de discussion</button></div>
+                <div><button type="button" class="btn" onclick="openFormFil()">+ fil de discussion</button></div>
             </div>
+
+
+
             <div class="cont_fils">
                 {{range .}}
-                    <div class="fil">
-                        <div class="img_tag">
-                            {{if eq .Tag_c.Id 1}}
-                            <img src="/assets/img/petanque.jpg">
-                            {{else if eq .Tag_c.Id 2}}
-                            <img src="/assets/img/cuisine.jpg">
-                            {{else}}
-                            <img src="/assets/img/nature.jpg">
-                            {{end}}
-                        </div>
-                        <div class="carac">
-                            <div class="title">
-                            <a href="/fil/{{.Id}}/messages"><h2>{{.Titre}}</h2></a>
-                            </div>
-                            <div>{{.User_c.Pseudo}}</div>
-                        </div>
+                <div class="fil">
+                    <div class="img_tag">
+                        {{if eq .Tag_c.Id 1}}
+                        <img src="/assets/img/petanque.jpg">
+                        {{else if eq .Tag_c.Id 2}}
+                        <img src="/assets/img/cuisine.jpg">
+                        {{else}}
+                        <img src="/assets/img/nature.jpg">
+                        {{end}}
                     </div>
+                    <div class="carac">
+                        <div class="title">
+                            <a href="/fil/{{.Id}}/messages">
+                                <h2>{{.Titre}}</h2>
+                            </a>
+                        </div>
+                        <div>{{.User_c.Pseudo}}</div>
+                    </div>
+                </div>
                 {{end}}
             </div>
-           
+        </div>
     </main>
+    <script src="/assets/js/script.js"></script>
 </body>
 
 </html>
 {{end}}
-
-<!-- {{if eq .TagId 1}}
-   <img src="/assets/img/petanque.jpg" alt="Pétanque">
-    {{else if eq .TagId 2}}
-    <img src="/assets/img/cuisine.jpg" alt="Football">
-    {{else}}
-    <img src="/assets/img/default.jpg" alt="Autre sport">
-{{end}} -->
