@@ -8,6 +8,7 @@ import (
 	"projet_forum/dto"
 	"projet_forum/helper"
 	"projet_forum/services"
+	"strconv"
 	"strings"
 )
 
@@ -67,8 +68,23 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *AuthController) Me(w http.ResponseWriter, r *http.Request) {
-	claims, _ := r.Context().Value("user").(*auth.Claims)
+	claims, ok := r.Context().Value("user").(*auth.Claims)
+	if !ok {
+		helper.WriteError(w, http.StatusUnauthorized, "non autorisé")
+		return
+	}
 
-	fmt.Println(claims)
-	helper.WriteJSON(w, http.StatusOK, fmt.Sprintf("Hello %v , u are %v", claims.UserID, claims.Role))
+	userID, err := strconv.ParseInt(claims.UserID, 10, 64)
+	if err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "id utilisateur invalide")
+		return
+	}
+
+	userProfile, err := c.service.GetProfile(userID)
+	if err != nil {
+		helper.WriteError(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, userProfile)
 }

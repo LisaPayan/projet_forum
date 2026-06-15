@@ -163,3 +163,25 @@ func (r *FilRepository) FilsNature() ([]models.Fil, error) {
 	}
 	return listFils, nil
 }
+
+// func (r *FilRepository) Like(idMess int) ([]models.Reaction, error) {
+// 	var listMessages []models.Message
+
+// 	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
+
+// 	sqlResult, sqlErr := r.db.Query(query, idMess)
+// 	if sqlErr != nil {
+// 		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
+// 	}
+// 	defer sqlResult.Close()
+// 	for sqlResult.Next() {
+// 		var message models.Message
+
+// 		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
+// 		if errScan != nil {
+// 			continue
+// 		}
+// 		listMessages = append(listMessages, message)
+// 	}
+// 	return listMessages, nil
+// }

@@ -55,7 +55,7 @@
 
             <div class="pagination-limit">
                 <form method="GET" action="/all">
-                    <label for="nbr_vis">Afficher par lot de :</label>
+                    <label for="nbr_vis"><h2>Afficher par lot de :</h2></label>
                     <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
                         <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
                         <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 éléments</option>

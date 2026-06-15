@@ -269,3 +269,10 @@ body {
     font-style:italic ;
     font-size:small;
 }
+
+.pagination-limit {
+    color: #0052cc;
+    font-size: x-large;
+    font-weight: bold;
+}
+

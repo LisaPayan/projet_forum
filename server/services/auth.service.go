@@ -121,3 +121,24 @@ func hashPassword(password string) string {
 	hash := sha512.Sum512([]byte(password))
 	return hex.EncodeToString(hash[:])
 }
+
+func (s *AuthService) GetProfile(userID int64) (*dto.UserResponseDto, error) {
+	user, err := s.authRepository.FindByUsernameOrEmail(strconv.FormatInt(userID, 10))
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	role := "user"
+	if user.IsAdmin == 1 {
+		role = "admin"
+	}
+
+	// On retourne le beau DTO tout propre
+	return &dto.UserResponseDto{
+		Id:      int64(user.Id),
+		Pseudo:  user.Pseudo,
+		Email:   user.Email,
+		Role:    role,
+		IsAdmin: user.IsAdmin == 0,
+	}, nil
+}
