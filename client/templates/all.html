@@ -35,12 +35,34 @@
         <div class="page_menu">
             <div class="pres">
                 <div>
-                    <h1 class="title">Bienvenue sur Soulèu !</h1>
+                    <h1 class="title">Fils de discussions</h1>
                 </div>
                 <div>
-                    <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...</h4>
+                    <h4>Retrouvez ici tous nos fils de discussions. Une question ? Besoin de rechercher quelque chose ? Bonne nouvelle, vous êtes au bon endroit !</h4>
                 </div>
                 <div><button class="btn">+ fil de discussion</button></div>
+            </div>
+
+            <div class="parent_div_serach">
+                <div class="div_search">
+                    <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                    title="Clique ici pour avoir les résultats de votre recherche">Recherche</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="pagination-limit">
+                <form method="GET" action="/all">
+                    <label for="nbr_vis">Afficher par lot de :</label>
+                    <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
+                        <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
+                        <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 éléments</option>
+                        <option value="30" {{if eq .NbrVis "30" }}selected{{end}}>30 éléments</option>
+                        <option value="all" {{if eq .NbrVis "all" }}selected{{end}}>Tout afficher</option>
+                    </select>
+                </form>
             </div>
 
             <div class="cont_fils">
@@ -70,8 +92,9 @@
             <div class="pagination">
                 {{if gt .Page 0}}
                 <div>
-                    <a href="/all?page={{.Prev}}">
-                        <button class="button_search" type="button" title="Clique ici pour voir les sujets précédents">Précédent</button>
+                    <a href="/all?page={{.Prev}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button"
+                            title="Clique ici pour voir les sujets précédents">Précédent</button>
                     </a>
                 </div>
                 {{end}}
@@ -82,17 +105,21 @@
 
                 {{if gt .Next .Page}}
                 <div>
-                    <a href="/all?page={{.Next}}">
-                        <button class="button_search" type="button" title="Clique ici pour voir les sujets suivants">Suivant</button>
+                    <a href="/all?page={{.Next}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button"
+                            title="Clique ici pour voir les sujets suivants">Suivant</button>
                     </a>
                 </div>
                 {{end}}
             </div>
 
-        </div> </main>
+        </div>
+    </main>
 
     <script src="/assets/js/script.js"></script>
 </body>
 
 </html>
 {{end}}
+
+     

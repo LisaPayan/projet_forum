@@ -39,7 +39,7 @@ func (r *FilRepository) CreateFil(fil models.Fil) (int, error) {
 func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	var listFils []models.Fil
 
-	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé';")
+	sqlResult, sqlErr := r.db.Query("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id, t.nom FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé';")
 
 	if sqlErr != nil {
 		return listFils, fmt.Errorf("Erreur récupération fil - Erreur: \n\t %s", sqlErr.Error())
@@ -48,7 +48,7 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	for sqlResult.Next() {
 		var fil models.Fil
 
-		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id)
+		errScan := sqlResult.Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id, &fil.Tag_c.Nom)
 		if errScan != nil {
 			continue
 		}

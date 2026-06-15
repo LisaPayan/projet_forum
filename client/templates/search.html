@@ -1,20 +1,27 @@
-{{define "petanque"}}
+{{define "search"}}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
-    <title>{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Pétanque{{end}}</title>
+    <title>Résultat(s)</title>
 </head>
-
 <body>
-    <header class="menu">
-        <div class="logo"><img src="../assets/img/logo.jpg"></div>
-        <div class="lien">
-            <a></a>
+    
+<body class="back_g">
 
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg" alt="Logo"></div>
+        <div class="lien">
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleDropdown()">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque">Pétanque</a>
+                    <a href="/fils/cuisine">Cuisine</a>
+                    <a href="/fils/nature">Nature</a>
+                </div>
+            </div>
         </div>
         <div class="connexion">
             <a>
@@ -23,20 +30,21 @@
             <a><button class="btn">S'inscrire</button></a>
         </div>
     </header>
+
     <main>
         <div class="page_menu">
             <div class="pres">
                 <div>
-                    <h1 class="title">{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Pétanque{{end}}</h1>
+                    <h1 class="title">Résulat(s) de votre recherche</h1>
                 </div>
                 <div>
-                    <h4>{{if .Data}}{{ (index .Data 0).Tag_c.Description }}{{else}}Discutez de tout ce que vous voulez en rapport avec la pétanque !{{end}}</h4>
+                    <h4>Voici les résultats de votre recherche. Les résultats portent uniquement sur le titre des fils de discussions, des pseudos créateurs d'un fil et sur les tags.</h4>
                 </div>
                 <div><button class="btn">+ fil de discussion</button></div>
             </div>
 
             <div class="pagination-limit">
-                <form method="GET" action="/fils/petanque">
+                <form method="GET" action="/search">
                     <label for="nbr_vis">Afficher par lot de :</label>
                     <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
                         <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
@@ -49,23 +57,31 @@
 
             <div class="cont_fils">
                 {{range .Data}}
-                    <div class="fil">
-                        <div class="img_tag">
-                            <img src="/assets/img/petanque.jpg">
-                        </div>
-                        <div class="carac">
-                            <div class="title">
-                            <a href="/fil/{{.Id}}/messages"><h2>{{.Titre}}</h2></a>
-                            </div>
-                            <div>{{.User_c.Pseudo}}</div>
-                        </div>
+                <div class="fil">
+                    <div class="img_tag">
+                        {{if eq .Tag_c.Id 1}}
+                        <img src="/assets/img/petanque.jpg" alt="Pétanque">
+                        {{else if eq .Tag_c.Id 2}}
+                        <img src="/assets/img/cuisine.jpg" alt="Cuisine">
+                        {{else}}
+                        <img src="/assets/img/nature.jpg" alt="Nature">
+                        {{end}}
                     </div>
+                    <div class="carac">
+                        <div class="title">
+                            <a href="/fil/{{.Id}}/messages">
+                                <h2>{{.Titre}}</h2>
+                            </a>
+                        </div>
+                        <div>{{.User_c.Pseudo}}</div>
+                    </div>
+                </div>
                 {{end}}
-            </div>
+            </div>  
             <div class="pagination">
                 {{if gt .Page 0}}
                 <div>
-                    <a href="/fils/petanque?page={{.Prev}}&nbr_vis={{.NbrVis}}">
+                    <a href="/all?page={{.Prev}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets précédents">Précédent</button>
                     </a>
@@ -78,14 +94,17 @@
 
                 {{if gt .Next .Page}}
                 <div>
-                    <a href="/fils/petanque?page={{.Next}}&nbr_vis={{.NbrVis}}">
+                    <a href="/all?page={{.Next}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets suivants">Suivant</button>
                     </a>
                 </div>
                 {{end}}
-            </div>
+            </div>    
+        </div>
     </main>
+
+    <script src="/assets/js/script.js"></script>
 </body>
 
 </html>

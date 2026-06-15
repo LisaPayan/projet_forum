@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
-    <title>{{ (index . 0).Tag_c.Nom }}</title>
+    <title>{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Nature{{end}}</title>
 </head>
 
 <body>
@@ -27,15 +27,28 @@
         <div class="page_menu">
             <div class="pres">
                 <div>
-                    <h1 class="title">{{ (index . 0).Tag_c.Nom }}</h1>
+                    <h1 class="title">{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Nature{{end}}</h1>
                 </div>
                 <div>
-                    <h4>{{ (index . 0).Tag_c.Description }}</h4>
+                    <h4>{{if .Data}}{{ (index .Data 0).Tag_c.Description }}{{else}}Discutez de tout ce que vous voulez en rapport avec la nature !{{end}}</h4>
                 </div>
                 <div><button class="btn">+ fil de discussion</button></div>
             </div>
+
+            <div class="pagination-limit">
+                <form method="GET" action="/fils/nature">
+                    <label for="nbr_vis">Afficher par lot de :</label>
+                    <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
+                        <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
+                        <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 éléments</option>
+                        <option value="30" {{if eq .NbrVis "30" }}selected{{end}}>30 éléments</option>
+                        <option value="all" {{if eq .NbrVis "all" }}selected{{end}}>Tout afficher</option>
+                    </select>
+                </form>
+            </div>
+
             <div class="cont_fils">
-                {{range .}}
+                {{range .Data}}
                     <div class="fil">
                         <div class="img_tag">
                             <img src="/assets/img/nature.jpg">
@@ -49,7 +62,31 @@
                     </div>
                 {{end}}
             </div>
-           
+
+            <div class="pagination">
+                {{if gt .Page 0}}
+                <div>
+                    <a href="/fils/nature?page={{.Prev}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button"
+                            title="Clique ici pour voir les sujets précédents">Précédent</button>
+                    </a>
+                </div>
+                {{end}}
+
+                <div>
+                    <p>Page {{.Page}}</p>
+                </div>
+
+                {{if gt .Next .Page}}
+                <div>
+                    <a href="/fils/nature?page={{.Next}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button"
+                            title="Clique ici pour voir les sujets suivants">Suivant</button>
+                    </a>
+                </div>
+                {{end}}
+            </div>
+        </div>         
     </main>
 </body>
 
