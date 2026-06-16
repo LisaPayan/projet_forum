@@ -424,17 +424,16 @@ func removeAccentsAndLower(str string) string {
 }
 
 func (c *FilControllers) DisplaySearch(w http.ResponseWriter, r *http.Request) {
-	query := r.FormValue("query")
+	queryRaw := r.FormValue("query")
+	queryClean := strings.TrimSpace(removeAccentsAndLower(queryRaw))
 
-	query = strings.TrimSpace(removeAccentsAndLower(query))
-	if query == "" {
-		http.Redirect(w, r, "/search", http.StatusMovedPermanently)
+	if queryClean == "" {
+		http.Redirect(w, r, "/search", http.StatusSeeOther)
 		return
 	}
 
 	pageStr := r.FormValue("page")
 	pageInt, _ := strconv.Atoi(pageStr)
-
 	if pageInt < 0 {
 		pageInt = 0
 	}
@@ -451,11 +450,10 @@ func (c *FilControllers) DisplaySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	searchList := []dto.FilDto{}
-
 	for _, item := range data {
-		checkTitre := strings.Contains(removeAccentsAndLower(item.Titre), query)
-		checkUser := strings.Contains(removeAccentsAndLower(item.User_c.Pseudo), query)
-		checkTag := strings.Contains(removeAccentsAndLower(item.Tag_c.Nom), query)
+		checkTitre := strings.Contains(removeAccentsAndLower(item.Titre), queryClean)
+		checkUser := strings.Contains(removeAccentsAndLower(item.User_c.Pseudo), queryClean)
+		checkTag := strings.Contains(removeAccentsAndLower(item.Tag_c.Nom), queryClean)
 
 		if checkTitre || checkUser || checkTag {
 			searchList = append(searchList, item)
@@ -469,28 +467,27 @@ func (c *FilControllers) DisplaySearch(w http.ResponseWriter, r *http.Request) {
 		nbrInt = 20
 	} else if nbr_vis == "30" {
 		nbrInt = 30
-	} else {
-		nbrInt = 10
 	}
 
+	totalItems := len(searchList)
+	var SelectFils []dto.FilDto
 	startIndex := pageInt * nbrInt
-	endIndex := startIndex + nbrInt
 
-	if startIndex >= len(searchList) {
+	if totalItems == 0 {
 		pageInt = 0
 		startIndex = 0
-		endIndex = nbrInt
-	}
-
-	if endIndex > len(searchList) {
-		endIndex = len(searchList)
-	}
-
-	var SelectFils []dto.FilDto
-	if len(searchList) > 0 {
-		SelectFils = searchList[startIndex:endIndex]
-	} else {
 		SelectFils = []dto.FilDto{}
+	} else {
+		if startIndex >= totalItems {
+			pageInt = (totalItems - 1) / nbrInt
+			startIndex = pageInt * nbrInt
+		}
+
+		endIndex := startIndex + nbrInt
+		if endIndex > totalItems {
+			endIndex = totalItems
+		}
+		SelectFils = searchList[startIndex:endIndex]
 	}
 
 	prevPage := pageInt - 1
@@ -499,16 +496,33 @@ func (c *FilControllers) DisplaySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nextPage := pageInt
-	if endIndex < len(searchList) {
+	if startIndex+nbrInt < totalItems {
 		nextPage = pageInt + 1
 	}
 
 	vieData := dto.PagePaginationFil{
+		Query:  queryRaw,
 		Page:   pageInt,
 		Next:   nextPage,
 		Prev:   prevPage,
 		NbrVis: nbr_vis,
 		Data:   SelectFils,
 	}
+
 	c.template.RenderTemplate(w, r, "search", vieData)
+}
+
+func (c *FilControllers) DisplayTriMessageChrono(w http.ResponseWriter, r *http.Request) {
+	idFil, idFilErr := strconv.Atoi(mux.Vars(r)["id"])
+	if idFilErr != nil {
+		http.Error(w, "Erreur - Identifiant produit invalide", http.StatusBadRequest)
+		return
+	}
+	fil, filErr := c.service.ReadByIdMessages(idFil)
+	if filErr != nil {
+		http.Error(w, filErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	c.template.RenderTemplate(w, r, "", fil)
+
 }

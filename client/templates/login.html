@@ -1,12 +1,23 @@
 {{define "login"}}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Login</title>
 </head>
 <body>
+    <form action="/login" method="post">
+        <label for="username">Identifiant</label>
+        <input type="text" name="username" id="username">
+
+        <label for="password">Mot de passe</label>
+        <input type="password" name="password" id="password">
+        {{if .}}
+        <p>{{.}}</p>
+        {{end}}
+        <button type="submit">Valider</button>
+    </form>
 </body>
 </html>
 {{end}}

@@ -25,12 +25,12 @@ func (r *FilRepository) CreateFil(fil models.Fil) (int, error) {
 	)
 
 	if sqlErr != nil {
-		return -1, fmt.Errorf(" Erreur ajout produit - Erreur : \n\t %s", sqlErr.Error())
+		return -1, fmt.Errorf(" Erreur ajout fil - Erreur : \n\t %s", sqlErr.Error())
 	}
 
 	id, idErr := sqlResult.LastInsertId()
 	if idErr != nil {
-		return -1, fmt.Errorf(" Erreur ajout produit - Erreur récupération identifiant : \n\t %s", idErr.Error())
+		return -1, fmt.Errorf(" Erreur ajout fil - Erreur récupération identifiant : \n\t %s", idErr.Error())
 	}
 
 	return int(id), nil
@@ -79,8 +79,52 @@ func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	return listMessages, nil
 }
 
+func (r *FilRepository) FilByIdMessagesAnciens(idFil int) ([]models.Message, error) {
+	var listMessages []models.Message
+
+	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
+
+	sqlResult, sqlErr := r.db.Query(query, idFil)
+	if sqlErr != nil {
+		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
+	}
+	defer sqlResult.Close()
+	for sqlResult.Next() {
+		var message models.Message
+
+		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
+		if errScan != nil {
+			continue
+		}
+		listMessages = append(listMessages, message)
+	}
+	return listMessages, nil
+}
+
+func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
+	var listMessages []models.Message
+
+	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication DESC; "
+
+	sqlResult, sqlErr := r.db.Query(query, idFil)
+	if sqlErr != nil {
+		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
+	}
+	defer sqlResult.Close()
+	for sqlResult.Next() {
+		var message models.Message
+
+		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
+		if errScan != nil {
+			continue
+		}
+		listMessages = append(listMessages, message)
+	}
+	return listMessages, nil
+}
+
 func (r *FilRepository) CreateMessageFil(message models.Message) (int, error) {
-	query := "INSERT INTO `messages` (`contenu`, `date_publication`, `fk_user, fk_fil`) VALUES (?,?,?,?);"
+	query := "INSERT INTO `messages` (`contenu`, `date_publication`, `fk_user`, `fk_fil`) VALUES (?,?,?,?);"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		message.Contenu,
@@ -90,12 +134,12 @@ func (r *FilRepository) CreateMessageFil(message models.Message) (int, error) {
 	)
 
 	if sqlErr != nil {
-		return -1, fmt.Errorf(" Erreur ajout produit - Erreur : \n\t %s", sqlErr.Error())
+		return -1, fmt.Errorf(" Erreur ajout message - Erreur : \n\t %s", sqlErr.Error())
 	}
 
 	id, idErr := sqlResult.LastInsertId()
 	if idErr != nil {
-		return -1, fmt.Errorf(" Erreur ajout produit - Erreur récupération identifiant : \n\t %s", idErr.Error())
+		return -1, fmt.Errorf(" Erreur ajout message - Erreur récupération identifiant : \n\t %s", idErr.Error())
 	}
 
 	return int(id), nil

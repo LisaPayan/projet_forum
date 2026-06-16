@@ -7,6 +7,19 @@ body {
     background-color: #faf7ee;
 }
 
+a {
+    outline: none;
+    text-decoration: none;
+}
+
+a:link {
+  color: #0052CC;
+}
+
+a:visited {
+  color: #0052CC;
+}
+
 .menu {
     height: 12vh;
     width: 100vw;
@@ -34,10 +47,11 @@ body {
 .lien {
     box-sizing:border-box;
     height: 100%;
-    width: 60%;
+    width: 22%;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 
 .dropdown {
@@ -84,6 +98,46 @@ body {
 
 .dropdown-content.show {
     display: block;
+}
+
+.content_search {
+    box-sizing:border-box;
+    height: 100%;
+    width: 38%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_barre {
+    border-radius: 20px;
+    border: 2px solid #0052CC;
+    padding: 10px 25px;
+    font-size: 1rem;
+}
+
+.search_barre :focus {
+    border: 3px solid #0052CC;
+    background-color: #e3ebf8;
+}
+
+.button_search {
+    border: 0;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: #faf7ee;
+    border-radius: 18px;
+    background-color: #0052CC;
+    border: 2px solid #0052CC; 
+}
+
+.button_search:hover {
+  background-color: #faf7ee;
+  color: #0052CC;
+  border: 2px solid #0052CC;
 }
 
 .connexion {

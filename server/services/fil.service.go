@@ -28,7 +28,33 @@ func (s *FilService) FilByIdMessages(idFil int) ([]models.Message, error) {
 		return []models.Message{}, fmt.Errorf(" Erreur récupération produit - identifiant invalide : %d", idFil)
 	}
 
-	fil, filErr := s.filRepository.FilByIdMessages(idFil)
+	fil, filErr := s.filRepository.FilByIdMessagesAnciens(idFil)
+	if filErr != nil {
+		return []models.Message{}, filErr
+	}
+
+	return fil, nil
+}
+
+func (s *FilService) FilByIdMessagesAnciens(idFil int) ([]models.Message, error) {
+	if idFil <= 0 {
+		return []models.Message{}, fmt.Errorf(" Erreur récupération produit - identifiant invalide : %d", idFil)
+	}
+
+	fil, filErr := s.filRepository.FilByIdMessagesAnciens(idFil)
+	if filErr != nil {
+		return []models.Message{}, filErr
+	}
+
+	return fil, nil
+}
+
+func (s *FilService) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
+	if idFil <= 0 {
+		return []models.Message{}, fmt.Errorf(" Erreur récupération produit - identifiant invalide : %d", idFil)
+	}
+
+	fil, filErr := s.filRepository.FilByIdMessagesRecents(idFil)
 	if filErr != nil {
 		return []models.Message{}, filErr
 	}
