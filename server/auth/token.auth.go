@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"projet_forum/config"
 	"time"
 
@@ -32,4 +33,30 @@ func GenerateToken(userID string, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString(secret)
+}
+
+func validatetoken(tokenString string) (*Claims, error) {
+	secret := []byte(config.GetEnvWithDefault("JWT_SECRET", "secret_forum"))
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			if token.Method != jwt.SigningMethodHS256 {
+				return nil, fmt.Errorf("methode de signature")
+			}
+
+			return secret, nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("token invalide")
+	}
+
+	return claims, nil
 }
