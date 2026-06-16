@@ -16,4 +16,7 @@ func RegisterAuthRoutes(r *mux.Router, authController *controllers.AuthControlle
 	r.HandleFunc("/logout", authController.Logout).Methods("GET")
 	r.HandleFunc("/me", authController.Me).Methods("GET")
 
+	r.HandleFunc("/register", authController.RegisterForm).Methods("GET")
+	r.HandleFunc("/register", authController.Register).Methods("POST")
+
 }

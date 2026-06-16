@@ -90,3 +90,40 @@ func (api *AuthApi) Me(token string) (dto.MeResponseDto, error) {
 
 	return data, nil
 }
+
+func (api *AuthApi) Register(data dto.RegisterRequestDto) (dto.RegisterResponseDto, error) {
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return dto.RegisterResponseDto{}, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, api.baseURL+"/register", bytes.NewReader(payload))
+	if err != nil {
+		return dto.RegisterResponseDto{}, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return dto.RegisterResponseDto{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		var errorResult map[string]string
+		json.NewDecoder(resp.Body).Decode(&errorResult)
+		if msg, ok := errorResult["error"]; ok {
+			return dto.RegisterResponseDto{}, fmt.Errorf("%s", msg)
+		}
+		return dto.RegisterResponseDto{}, fmt.Errorf("erreur d'inscription - code %v", resp.StatusCode)
+	}
+
+	var result dto.RegisterResponseDto
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return dto.RegisterResponseDto{}, fmt.Errorf("erreur décodage réponse inscription - %s", err.Error())
+	}
+
+	return result, nil
+}

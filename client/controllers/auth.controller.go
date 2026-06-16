@@ -88,3 +88,26 @@ func (c *AuthControllers) Me(w http.ResponseWriter, r *http.Request) {
 	// {"code":200,"message":"Hello user 1 with role admin"}
 	json.NewEncoder(w).Encode(value)
 }
+
+func (c *AuthControllers) RegisterForm(w http.ResponseWriter, r *http.Request) {
+	c.template.RenderTemplate(w, r, "register", nil)
+}
+
+func (c *AuthControllers) Register(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		c.template.RenderTemplate(w, r, "register", "Formulaire invalide")
+		return
+	}
+
+	pseudo := r.FormValue("pseudo")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	_, err := c.service.Register(pseudo, email, password)
+	if err != nil {
+		c.template.RenderTemplate(w, r, "register", err.Error())
+		return
+	}
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}

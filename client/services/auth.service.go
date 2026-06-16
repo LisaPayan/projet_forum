@@ -44,3 +44,20 @@ func (s *AuthService) Me(token string) (dto.MeResponseDto, error) {
 	}
 	return result, nil
 }
+
+func (s *AuthService) Register(pseudo, email, password string) (dto.RegisterResponseDto, error) {
+	if pseudo == "" || email == "" || password == "" {
+		return dto.RegisterResponseDto{}, fmt.Errorf("Tous les champs sont obligatoires")
+	}
+
+	response, err := s.authApi.Register(dto.RegisterRequestDto{
+		Pseudo:   pseudo,
+		Email:    email,
+		Password: password,
+	})
+	if err != nil {
+		return dto.RegisterResponseDto{}, err
+	}
+
+	return response, nil
+}
