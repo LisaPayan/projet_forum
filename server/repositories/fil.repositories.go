@@ -57,6 +57,21 @@ func (r *FilRepository) ReadAll() ([]models.Fil, error) {
 	return listFils, nil
 }
 
+func (r *FilRepository) ReadById(id int) (models.Fil, error) {
+	var fil models.Fil
+	sqlErr := r.db.QueryRow("SELECT f.id, f.titre, f.statut, f.score, u.pseudo, t.id, t.nom FROM fils f LEFT JOIN users u ON f.fk_user = u.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE f.statut != 'archivé' AND f.id = ?;", id).
+		Scan(&fil.Id, &fil.Titre, &fil.Statut, &fil.Score, &fil.User_c.Pseudo, &fil.Tag_c.Id, &fil.Tag_c.Nom)
+
+	if sqlErr != nil {
+		if sqlErr == sql.ErrNoRows {
+			return models.Fil{}, nil
+		}
+		return models.Fil{}, fmt.Errorf(" Erreur récupération produit - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	return fil, nil
+}
+
 func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 

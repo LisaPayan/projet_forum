@@ -79,6 +79,67 @@ func (c *FilControllers) DisplayList(w http.ResponseWriter, r *http.Request) {
 // 	c.template.RenderTemplate(w, r, "nature", filList)
 // }
 
+func (c *FilControllers) CreateForm(w http.ResponseWriter, r *http.Request) {
+	c.template.RenderTemplate(w, r, "fil_create", nil)
+}
+
+func (c *FilControllers) Create(w http.ResponseWriter, r *http.Request) {
+
+	tagIdStr := r.FormValue("tag_id")
+	tagIdInt, _ := strconv.Atoi(tagIdStr)
+
+	newFil := dto.FilDto{}
+	newFil.Titre = r.FormValue("titre")
+	newFil.Tag_c.Id = tagIdInt
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	filId, err := c.service.Create(newFil, cookie.Value)
+	if err != nil {
+		referer := r.Referer()
+		if referer == "" {
+			referer = "/all"
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	destination := fmt.Sprintf("/fil/%d/messages", filId)
+	http.Redirect(w, r, destination, http.StatusSeeOther)
+}
+
+func (c *FilControllers) CreateMessage(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	filId, _ := strconv.Atoi(vars["id"])
+
+	newMessage := dto.MessageDto{}
+	newMessage.Contenu = r.FormValue("contenu")
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	_, err = c.service.CreateMessage(newMessage, filId, cookie.Value)
+	if err != nil {
+		referer := r.Referer()
+		if referer == "" {
+			referer = fmt.Sprintf("/fil/%d/messages", filId)
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	destination := fmt.Sprintf("/fil/%d/messages", filId)
+	http.Redirect(w, r, destination, http.StatusSeeOther)
+}
+
 func (c *FilControllers) DisplayPaginationAll(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.FormValue("page")
 	pageInt, _ := strconv.Atoi(pageStr)

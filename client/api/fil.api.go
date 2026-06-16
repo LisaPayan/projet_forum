@@ -49,6 +49,53 @@ func (api *FilApi) executeRequest(req *http.Request, result interface{}) (int, e
 	return resp.StatusCode, nil
 }
 
+func (api *FilApi) Create(fil dto.FilDto, token string) (int, dto.FilDto, error) {
+	payload, err := json.Marshal(fil)
+	if err != nil {
+		return 0, dto.FilDto{}, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, api.baseURL+"/fils", bytes.NewReader(payload))
+	if err != nil {
+		return 0, dto.FilDto{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	var created dto.FilDto
+	_, err = api.executeRequest(req, &created)
+	if err != nil {
+		return 0, dto.FilDto{}, err
+	}
+
+	return created.Id, created, nil
+}
+
+func (api *FilApi) CreateMessage(message dto.MessageDto, filId int, token string) (int, dto.MessageDto, error) {
+	payload, err := json.Marshal(message)
+	if err != nil {
+		return 0, dto.MessageDto{}, err
+	}
+
+	url := fmt.Sprintf("%s/fil/%d/messages", api.baseURL, filId)
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
+	if err != nil {
+		return 0, dto.MessageDto{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	var created dto.MessageDto
+	_, err = api.executeRequest(req, &created)
+	if err != nil {
+		return 0, dto.MessageDto{}, err
+	}
+
+	return created.Id, created, nil
+}
+
 func (api *FilApi) ReadAll() ([]dto.FilDto, error) {
 	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils", nil)
 	if err != nil {
@@ -61,6 +108,24 @@ func (api *FilApi) ReadAll() ([]dto.FilDto, error) {
 		return nil, err
 	}
 	return list, nil
+}
+
+func (api *FilApi) ReadById(id int) (dto.FilDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils/"+strconv.Itoa(id), nil)
+	if err != nil {
+		return dto.FilDto{}, err
+	}
+
+	var fil dto.FilDto
+	status, err := api.executeRequest(req, &fil)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return dto.FilDto{}, nil
+		}
+		return dto.FilDto{}, err
+	}
+
+	return fil, nil
 }
 
 func (api *FilApi) ReadByIdMessages(id int) ([]dto.MessageDto, error) {

@@ -143,6 +143,16 @@
                 </div>
                 {{end}}
             </div>
+            <div class="reply-section">
+                <h3>Participer à la discussion</h3>
+                <form action="/fil/{{.IdFil}}/messages" method="POST">
+                    <div class="form-group">
+                        <textarea name="contenu" id="contenu" rows="5" required 
+                            placeholder="Écrivez votre message de réponse ici..."></textarea>
+                    </div>
+                    <button class="button_search" type="submit">Envoyer le message</button>
+                </form>
+            </div>
         </div>
     </main>
     <script src="/assets/js/script.js"></script>

@@ -14,6 +14,32 @@ func InitFilService(FilRepository *repositories.FilRepository) *FilService {
 	return &FilService{filRepository: FilRepository}
 }
 
+func (s *FilService) Create(fil models.Fil) (int, error) {
+	if fil.Titre == "" || fil.User_c.Id == 0 || fil.Tag_c.Id == 0 {
+		return -1, fmt.Errorf(" Erreur ajout fil - Données manquantes ou invalides")
+	}
+
+	filId, filErr := s.filRepository.CreateFil(fil)
+	if filErr != nil {
+		return -1, filErr
+	}
+
+	return filId, nil
+}
+
+func (s *FilService) CreateMessage(message models.Message) (int, error) {
+	if message.Contenu == "" || message.User_c.Id == 0 || message.Fil_c.Id == 0 {
+		return -1, fmt.Errorf(" Erreur ajout message - Données manquantes ou invalides")
+	}
+
+	messageId, messageErr := s.filRepository.CreateMessageFil(message)
+	if messageErr != nil {
+		return -1, messageErr
+	}
+
+	return messageId, nil
+}
+
 func (s *FilService) ReadAll() ([]models.Fil, error) {
 	filsList, filsErr := s.filRepository.ReadAll()
 	if filsErr != nil {
@@ -21,6 +47,19 @@ func (s *FilService) ReadAll() ([]models.Fil, error) {
 	}
 
 	return filsList, nil
+}
+
+func (s *FilService) ReadById(idFil int) (models.Fil, error) {
+	if idFil <= 0 {
+		return models.Fil{}, fmt.Errorf(" Erreur récupération fil - identifiant invalide : %d", idFil)
+	}
+
+	fil, filErr := s.filRepository.ReadById(idFil)
+	if filErr != nil {
+		return models.Fil{}, filErr
+	}
+
+	return fil, nil
 }
 
 func (s *FilService) FilByIdMessages(idFil int) ([]models.Message, error) {
