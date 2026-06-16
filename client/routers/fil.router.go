@@ -2,6 +2,8 @@ package routers
 
 import (
 	"client/controllers"
+	"client/middleware"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -9,7 +11,7 @@ import (
 func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControllers) {
 	r.HandleFunc("/", filController.DisplayList).Methods("GET")
 	r.HandleFunc("/all", filController.DisplayPaginationAll).Methods("GET")
-	r.HandleFunc("/search", filController.DisplaySearch).Methods("GET")
+	r.Handle("/search", middleware.AuthMiddleware(http.HandlerFunc(filController.DisplaySearch))).Methods("GET")
 	r.HandleFunc("/fils/petanque", filController.DisplayPaginationPetanque).Methods("GET")
 	r.HandleFunc("/fils/cuisine", filController.DisplayPaginationCuisine).Methods("GET")
 	r.HandleFunc("/fils/nature", filController.DisplayPaginationNature).Methods("GET")
