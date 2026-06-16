@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"projet_forum/config"
 	"time"
@@ -42,20 +43,26 @@ func validatetoken(tokenString string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(
 		tokenString,
 		claims,
-		func(token *jwt.Token) (interface{}, error) {
-			if token.Method != jwt.SigningMethodHS256 {
-				return nil, fmt.Errorf("methode de signature")
+		func(t *jwt.Token) (interface{}, error) {
+			if t == nil {
+				return nil, fmt.Errorf("token is nil")
 			}
-
+			if t.Method == nil || t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+				return nil, fmt.Errorf("invalid signing method")
+			}
 			return secret, nil
 		},
+		jwt.WithIssuer("forum-api"),
+		jwt.WithAudience("forum-front"),
+		jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
 	if !token.Valid {
-		return nil, fmt.Errorf("token invalide")
+		return nil, errors.New("token invalide")
 	}
 
 	return claims, nil

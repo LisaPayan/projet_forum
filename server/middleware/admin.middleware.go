@@ -3,6 +3,9 @@ package middleware
 import (
 	"net/http"
 	"strings"
+
+	"projet_forum/server/auth"
+	"projet_forum/server/helper"
 )
 
 func adminMiddleware(next http.Handler) http.Handler {
@@ -10,24 +13,24 @@ func adminMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 
 		if authHeader == "" {
-			helper.writeerror(w, http.StatusUnauthorized, "token manquant")
+			helper.WriteError(w, http.StatusUnauthorized, "token manquant")
 			return
 		}
 
-		parts := strings.SplitN(authHeader, " ")
+		parts := strings.SplitN(authHeader, " ", 2)
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			helper.writeerror(w, http.StatusUnauthorized, "format de token invalide")
+			helper.WriteError(w, http.StatusUnauthorized, "format de token invalide")
 			return
 		}
 
-		claims, err := auth.validatetoken(parts[1])
+		claims, err := auth.ValidateToken(parts[1])
 		if err != nil {
-			helper.writeerror(w, http.StatusUnauthorized, "token invalide")
+			helper.WriteError(w, http.StatusUnauthorized, "token invalide")
 			return
 		}
 
 		if claims.Role != "admin" {
-			helper.writeerror(w, http.StatusForbidden, "accès réservé aux administrateurs")
+			helper.WriteError(w, http.StatusForbidden, "accès réservé aux administrateurs")
 			return
 		}
 
