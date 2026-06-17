@@ -258,3 +258,32 @@ func (r *FilRepository) AjoutReaction(reaction models.Reaction) (int, error) {
 	}
 	return 1, nil
 }
+
+func (r *FilRepository) GetFilOwner(idFil int) (int, error) {
+	var userID int
+	query := "SELECT fk_user FROM fils WHERE id = ?;"
+	err := r.db.QueryRow(query, idFil).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+func (r *FilRepository) UpdateFilById(fil models.Fil) error {
+	query := "UPDATE fils SET titre=?,`fk_tag`=? WHERE id=?;"
+
+	sqlResult, sqlErr := r.db.Exec(query,
+		fil.Titre,
+		fil.Tag_c.Id,
+		fil.Id)
+
+	if sqlErr != nil {
+		return fmt.Errorf(" Erreur modification fil - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
+		return fmt.Errorf(" Erreur modification fil - Aucune ligne modifiée")
+	}
+
+	return nil
+}

@@ -607,3 +607,42 @@ func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {
 	destination := "/fil/" + filIdStr + "/messages"
 	http.Redirect(w, r, destination, http.StatusSeeOther)
 }
+
+func (c *FilControllers) UpdateForm(w http.ResponseWriter, r *http.Request) {
+	idFil, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	filActuel, err := c.service.ReadById(idFil)
+	if err != nil {
+		http.Error(w, "Impossible de charger le fil de discussion", http.StatusInternalServerError)
+		return
+	}
+
+	c.template.RenderTemplate(w, r, "fil_update", map[string]interface{}{
+		"Fil": filActuel,
+	})
+}
+
+func (c *FilControllers) UpdateFilById(w http.ResponseWriter, r *http.Request) {
+	idFil, _ := strconv.Atoi(mux.Vars(r)["id"])
+	tagIdStr := r.FormValue("tag_id")
+	tagIdInt, _ := strconv.Atoi(tagIdStr)
+
+	updateFil := dto.FilDto{}
+	updateFil.Id = idFil
+	updateFil.Titre = r.FormValue("titre")
+	updateFil.Tag_c.Id = tagIdInt
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	err = c.service.UpdateFilById(updateFil, cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/fil/%d/messages", idFil), http.StatusSeeOther)
+}

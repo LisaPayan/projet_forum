@@ -87,3 +87,14 @@ func (s *FilService) AjoutReaction(reaction dto.Reaction, token string) (int, er
 
 	return reac, nil
 }
+
+func (s *FilService) UpdateFilById(fil dto.FilDto, token string) error {
+	if fil.Id <= 0 {
+		return fmt.Errorf("Erreur modification fil - Identifiant invalide")
+	}
+	if fil.Titre == "" || fil.Tag_c.Id == 0 {
+		return fmt.Errorf("Erreur modification fil - Données manquantes ou invalides")
+	}
+
+	return s.filApi.UpdateFilById(fil, token)
+}

@@ -111,7 +111,7 @@ func (api *FilApi) ReadAll() ([]dto.FilDto, error) {
 }
 
 func (api *FilApi) ReadById(id int) (dto.FilDto, error) {
-	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fils/"+strconv.Itoa(id), nil)
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fil/"+strconv.Itoa(id), nil)
 	if err != nil {
 		return dto.FilDto{}, err
 	}
@@ -214,4 +214,29 @@ func (api *FilApi) AjoutReaction(reaction dto.Reaction, token string) (int, dto.
 	}
 
 	return 1, created, nil
+}
+
+func (api *FilApi) UpdateFilById(fil dto.FilDto, token string) error {
+	payload, err := json.Marshal(fil)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, api.baseURL+"/fil/"+strconv.Itoa(fil.Id), bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	status, err := api.executeRequest(req, nil)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return fmt.Errorf("Fil introuvable")
+		}
+		return err
+	}
+
+	return nil
 }

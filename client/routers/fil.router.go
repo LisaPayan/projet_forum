@@ -25,4 +25,7 @@ func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControll
 	r.Handle("/fils/create", middleware.AuthMiddleware(http.HandlerFunc(filController.CreateForm))).Methods("GET")
 	r.Handle("/fils", middleware.AuthMiddleware(http.HandlerFunc(filController.Create))).Methods("POST")
 
+	r.Handle("/fil/{id}/edit", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateForm))).Methods("GET")
+	r.Handle("/fil/{id}/update", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateFilById))).Methods("POST")
+
 }

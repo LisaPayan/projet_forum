@@ -40,33 +40,6 @@
         </div>
     </header>
 
-    <div id="create-fil-form" class="form">
-        <div class="form-content">
-            <span class="close-btn" onclick="closeFormFil()">x</span>
-
-            <h2>Créer un nouveau fil de discussion</h2>
-
-            <form action="/fil" method="POST">
-                <div class="form-group">
-                    <label for="titre">Titre du fil :</label>
-                    <input type="text" id="titre" name="titre" required
-                        placeholder="Ex: Les meilleurs coins à champignons">
-                </div>
-
-                <div class="form-group">
-                    <label for="tag_id">Choisir un sujet :</label>
-                    <select name="tag_id" id="tag_id" required>
-                        <option value="1">Pétanque</option>
-                        <option value="2">Cuisine</option>
-                        <option value="3">Nature</option>
-                    </select>
-                </div>
-                <div class="indic">* Vous devez être authentifié pour créer un fil</div>
-                <button type="submit" class="btn">Publier le fil</button>
-            </form>
-        </div>
-    </div>
-
     <main>
         <div class="page_menu">
             <div class="pres">
@@ -79,8 +52,6 @@
                 </div>
                 <div><button type="button" class="btn" onclick="openFormFil()">+ fil de discussion</button></div>
             </div>
-
-
 
             <div class="cont_fils">
                 {{range .}}
@@ -99,6 +70,7 @@
                             <a href="/fil/{{.Id}}/messages">
                                 <h2>{{.Titre}}</h2>
                             </a>
+                            <a href="/fil/{{.Id}}/edit">cc</a>
                         </div>
                         <div>{{.User_c.Pseudo}}</div>
                     </div>

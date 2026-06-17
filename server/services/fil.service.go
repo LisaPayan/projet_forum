@@ -117,3 +117,15 @@ func (s *FilService) AjoutReaction(reaction models.Reaction) (int, error) {
 	}
 	return reac, nil
 }
+
+func (s *FilService) GetFilOwner(idFil int) (int, error) {
+	return s.filRepository.GetFilOwner(idFil)
+}
+
+func (s *FilService) UpdateFilById(fil models.Fil) error {
+	if fil.Id == 0 || fil.Titre == "" || fil.Tag_c.Id == 0 {
+		return fmt.Errorf(" Erreur modification fil - Donnees manquantes ou invalides")
+	}
+
+	return s.filRepository.UpdateFilById(fil)
+}
