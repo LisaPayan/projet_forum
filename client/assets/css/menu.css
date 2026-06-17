@@ -646,3 +646,25 @@ a:visited {
     font-size: 0.85rem;
     font-style: italic;
 }
+
+.form_connec select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form_connec select:focus {
+    border-color: #0052CC;
+    background-color: white;
+}
+
+.form_connec select option {
+    background-color: white;
+    padding: 10px;
+}
