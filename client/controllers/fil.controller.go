@@ -646,3 +646,20 @@ func (c *FilControllers) UpdateFilById(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("/fil/%d/messages", idFil), http.StatusSeeOther)
 }
+
+func (c *FilControllers) DeleteFilById(w http.ResponseWriter, r *http.Request) {
+	idFil, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	err = c.service.DeleteFilById(idFil, cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/all", http.StatusSeeOther)
+}

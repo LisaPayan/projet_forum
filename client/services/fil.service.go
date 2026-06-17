@@ -98,3 +98,11 @@ func (s *FilService) UpdateFilById(fil dto.FilDto, token string) error {
 
 	return s.filApi.UpdateFilById(fil, token)
 }
+
+func (s *FilService) DeleteFilById(idFil int, token string) error {
+	if idFil <= 0 {
+		return fmt.Errorf("Erreur suppression fil - Identifiant invalide")
+	}
+
+	return s.filApi.DeleteFilById(idFil, token)
+}

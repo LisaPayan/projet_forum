@@ -287,3 +287,16 @@ func (r *FilRepository) UpdateFilById(fil models.Fil) error {
 
 	return nil
 }
+
+func (r *FilRepository) DeleteFiltById(id int) error {
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM fils WHERE id=?;", id)
+	if sqlErr != nil {
+		return fmt.Errorf(" Erreur suppression fil - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
+		return fmt.Errorf(" Erreur suppression fil - Aucun fil supprime")
+	}
+
+	return nil
+}

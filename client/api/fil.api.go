@@ -240,3 +240,23 @@ func (api *FilApi) UpdateFilById(fil dto.FilDto, token string) error {
 
 	return nil
 }
+
+func (api *FilApi) DeleteFilById(id int, token string) error {
+	req, err := http.NewRequest(http.MethodDelete, api.baseURL+"/fil/"+strconv.Itoa(id), nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	status, err := api.executeRequest(req, nil)
+	if err != nil {
+		if status == http.StatusForbidden {
+			return fmt.Errorf("Vous n'avez pas les droits pour supprimer ce fil")
+		}
+		return err
+	}
+
+	return nil
+}

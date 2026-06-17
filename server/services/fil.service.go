@@ -129,3 +129,11 @@ func (s *FilService) UpdateFilById(fil models.Fil) error {
 
 	return s.filRepository.UpdateFilById(fil)
 }
+
+func (s *FilService) DeleteFilById(idFil int) error {
+	if idFil <= 0 {
+		return fmt.Errorf(" Erreur suppression fil - identifiant invalide : %d", idFil)
+	}
+
+	return s.filRepository.DeleteFiltById(idFil)
+}

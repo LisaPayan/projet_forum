@@ -50,7 +50,7 @@
                     <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...
                     </h4>
                 </div>
-                <div><button type="button" class="btn" onclick="openFormFil()">+ fil de discussion</button></div>
+                <div><button>+ fil de discussion</button></div>
             </div>
 
             <div class="cont_fils">
@@ -71,6 +71,9 @@
                                 <h2>{{.Titre}}</h2>
                             </a>
                             <a href="/fil/{{.Id}}/edit">cc</a>
+                            <form action="/fil/{{.Id}}/delete" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fil ?');">
+                                <button type="submit" >Supprimer</button>
+                            </form>
                         </div>
                         <div>{{.User_c.Pseudo}}</div>
                     </div>

@@ -236,3 +236,37 @@ func (c *FilControllers) UpdateFilById(w http.ResponseWriter, r *http.Request) {
 	}
 	helper.WriteJSON(w, http.StatusOK, updatedFil)
 }
+
+func (c *FilControllers) DeleteFilById(w http.ResponseWriter, r *http.Request) {
+	userData, _ := r.Context().Value("user").(*auth.Claims)
+
+	idFil, idFilErr := readFilId(r)
+	if idFilErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant fil invalide")
+		return
+	}
+
+	userConnecteId, _ := strconv.Atoi(userData.UserID)
+	isAdmin := userData.Role == "admin"
+
+	idProprietaire, errOwner := c.service.GetFilOwner(idFil)
+	if errOwner != nil {
+		helper.WriteError(w, http.StatusNotFound, "Fil de discussion introuvable")
+		return
+	}
+
+	if userConnecteId != idProprietaire && !isAdmin {
+		helper.WriteError(w, http.StatusForbidden, "Action refusée : Vous n'avez pas les droits pour supprimer ce fil")
+		return
+	}
+
+	filErr := c.service.DeleteFilById(idFil)
+	if filErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, filErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "Fil supprime",
+	})
+}
