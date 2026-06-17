@@ -110,12 +110,22 @@ a:visited {
     justify-content: center;
 }
 
-.search_barre {
+.div_search input[type="text"]{
+    /* width: 100%; */
+    padding: 10px 25px;
+    border: 2px solid #0052CC;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* .search_barre {
     border-radius: 20px;
     border: 2px solid #0052CC;
     padding: 10px 25px;
     font-size: 1rem;
-}
+} */
 
 .search_barre :focus {
     border: 3px solid #0052CC;
@@ -462,17 +472,6 @@ a:visited {
     padding-right: 30px;
 }
 
-/* .form_connec {
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    width: 30vw;
-    height: 30vh;
-    border: 3px solid #0052CC; 
-    border-radius: 20px;
-    background-color: white;
-} */
-
 .cont_form_login {
     display: flex;
     justify-content: center; 
@@ -489,6 +488,11 @@ a:visited {
     width: 90%;
     max-width: 450px; 
     box-sizing: border-box;
+}
+
+.form_connec h2 {
+    color: #0052CC;
+    padding-bottom: 2vh;
 }
 
 .form_connec form {
@@ -553,4 +557,92 @@ a:visited {
     font-size: 0.9rem;
     margin-bottom: 15px;
     text-align: left;
+}
+
+.form_inscrip {
+    background-color: white;
+    border: 3px solid #0052CC;
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 600px; 
+    box-sizing: border-box;
+}
+
+.form_inscrip h2 {
+    color: #0052CC;
+    margin-top: 0;
+    padding-bottom: 2vh;
+}
+
+.form_inscrip form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form_inscrip .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.form_inscrip .form-group label {
+    font-weight: 600;
+}
+
+.form_inscrip input[type="text"], 
+.form_inscrip input[type="password"],
+.form_inscrip input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form_inscrip input[type="text"]:focus, 
+.form_inscrip input[type="password"]:focus,
+.form_inscrip input[type="email"]:focus {
+    border-color: #0052CC;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.15);
+}
+
+.form_inscrip button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.form_inscrip .switch_log {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: gray;
+}
+
+.form_inscrip .switch_log a {
+    color: #0052CC;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.form_inscrip .form-group .indic {
+    color: red;
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.ital {
+    color: red;
+    font-size: 0.85rem;
+    font-style: italic;
 }
