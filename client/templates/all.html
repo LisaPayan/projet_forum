@@ -14,13 +14,15 @@
         <div class="logo"><img src="../assets/img/logo.jpg"></div>
         <div class="lien">
             <div class="dropdown">
-                <button type="button" class="dropdown-btn" onclick="toggleDropdown()" title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()"
+                    title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
                 <div id="dropdown-menu" class="dropdown-content">
                     <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
                     <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
                     <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
                 </div>
-                <button type="button" class="dropdown-btn"><a href="/all" title="clique ici pour voir tous les fils de discussion">All</a></button>
+                <button type="button" class="dropdown-btn"><a href="/all"
+                        title="clique ici pour voir tous les fils de discussion">All</a></button>
             </div>
         </div>
         <div class="content_search">
@@ -47,23 +49,27 @@
                     <h1 class="title">Fils de discussions</h1>
                 </div>
                 <div>
-                    <h4>Retrouvez ici tous nos fils de discussions. Une question ? Besoin de rechercher quelque chose ? Bonne nouvelle, vous êtes au bon endroit !</h4>
+                    <h4>Retrouvez ici tous nos fils de discussions. Une question ? Besoin de rechercher quelque chose ?
+                        Bonne nouvelle, vous êtes au bon endroit !</h4>
                 </div>
-                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil de discussion</button></a></div>
+                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil de
+                            discussion</button></a></div>
             </div>
 
             <div class="cont_fils">
                 <div class="pagination-limit">
-                <form method="GET" action="/all">
-                    <label for="nbr_vis"><h2>Afficher par lot de :</h2></label>
-                    <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
-                        <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
-                        <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 éléments</option>
-                        <option value="30" {{if eq .NbrVis "30" }}selected{{end}}>30 éléments</option>
-                        <option value="all" {{if eq .NbrVis "all" }}selected{{end}}>Tout afficher</option>
-                    </select>
-                </form>
-            </div>
+                    <form method="GET" action="/all">
+                        <label for="nbr_vis">
+                            <h2>Afficher par lot de :</h2>
+                        </label>
+                        <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
+                            <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
+                            <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 éléments</option>
+                            <option value="30" {{if eq .NbrVis "30" }}selected{{end}}>30 éléments</option>
+                            <option value="all" {{if eq .NbrVis "all" }}selected{{end}}>Tout afficher</option>
+                        </select>
+                    </form>
+                </div>
 
                 {{range .Data}}
                 <div class="fil">
@@ -88,8 +94,10 @@
                             </div>
                             <div class="action">
                                 <a href="/fil/{{.Id}}/edit" title="clique ici pour modifier ce fil">Modifier</a>
-                                <form action="/fil/{{.Id}}/delete" method="POST" title="clique ici pour supprimer ce fil" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fil ?');">
-                                    <button class="btn_sup" type="submit" >Supprimer</button>
+                                <form action="/fil/{{.Id}}/delete" method="POST"
+                                    title="clique ici pour supprimer ce fil"
+                                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fil ?');">
+                                    <button class="btn_sup" type="submit">Supprimer</button>
                                 </form>
                             </div>
                         </div>
@@ -130,5 +138,3 @@
 
 </html>
 {{end}}
-
-     
