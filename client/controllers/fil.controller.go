@@ -702,3 +702,21 @@ func (c *FilControllers) UpdateMessageById(w http.ResponseWriter, r *http.Reques
 
 	http.Redirect(w, r, fmt.Sprintf("/fil/%s/messages", idFilStr), http.StatusSeeOther)
 }
+
+func (c *FilControllers) DeleteMessage(w http.ResponseWriter, r *http.Request) {
+	idMessage, _ := strconv.Atoi(r.FormValue("message_id"))
+	idFilStr := r.FormValue("fil_id")
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	err = c.service.DeleteMessage(idMessage, cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/fil/%s/messages", idFilStr), http.StatusSeeOther)
+}

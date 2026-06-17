@@ -285,3 +285,32 @@ func (api *FilApi) UpdateMessageById(message dto.MessageDto, token string) error
 
 	return nil
 }
+
+func (api *FilApi) DeleteMessage(id int, token string) error {
+	messageDto := dto.MessageDto{
+		Id: id,
+	}
+
+	payload, err := json.Marshal(messageDto)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, api.baseURL+"/message/delete", bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	status, err := api.executeRequest(req, nil)
+	if err != nil {
+		if status == http.StatusForbidden {
+			return fmt.Errorf("Vous n'avez pas les droits pour supprimer ce message")
+		}
+		return err
+	}
+
+	return nil
+}

@@ -117,3 +117,11 @@ func (s *FilService) UpdateMessageById(message dto.MessageDto, token string) err
 
 	return s.filApi.UpdateMessageById(message, token)
 }
+
+func (s *FilService) DeleteMessage(idMessage int, token string) error {
+	if idMessage <= 0 {
+		return fmt.Errorf("Erreur suppression message - Identifiant invalide")
+	}
+
+	return s.filApi.DeleteMessage(idMessage, token)
+}

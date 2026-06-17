@@ -22,6 +22,7 @@ func RegisterFilRoutes(r *mux.Router, filController *controllers.FilControllers)
 
 	r.Handle("/message/reaction", middleware.AuthMiddleware(http.HandlerFunc(filController.AjoutReaction))).Methods("POST")
 	r.Handle("/message/update", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateMessageById))).Methods("PUT")
+	r.Handle("/message/delete", middleware.AuthMiddleware(http.HandlerFunc(filController.DeleteMessage))).Methods("DELETE")
 
 	r.Handle("/fil/{id}", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateFilById))).Methods("PUT")
 	r.Handle("/fil/{id}", middleware.AuthMiddleware(http.HandlerFunc(filController.DeleteFilById))).Methods("DELETE")

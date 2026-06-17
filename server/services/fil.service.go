@@ -135,7 +135,7 @@ func (s *FilService) DeleteFilById(idFil int) error {
 		return fmt.Errorf(" Erreur suppression fil - identifiant invalide : %d", idFil)
 	}
 
-	return s.filRepository.DeleteFiltById(idFil)
+	return s.filRepository.DeleteFilById(idFil)
 }
 
 func (s *FilService) GetMessageOwner(idMessage int) (int, error) {
@@ -148,4 +148,12 @@ func (s *FilService) UpdateMessageById(message models.Message) error {
 	}
 
 	return s.filRepository.UpdateMessageById(message)
+}
+
+func (s *FilService) DeleteMessage(idMessage int) error {
+	if idMessage <= 0 {
+		return fmt.Errorf(" Erreur suppression message - identifiant invalide : %d", idMessage)
+	}
+
+	return s.filRepository.DeleteMessage(idMessage)
 }

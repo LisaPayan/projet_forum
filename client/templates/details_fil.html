@@ -131,6 +131,11 @@
                             <div>{{ .Contenu }}</div>
                             <div>{{ .User_c.Pseudo }}</div>
                             <a href="/message/edit?message_id={{ .Id }}&fil_id={{ $.IdFil }}&contenu={{ .Contenu }}">Modifier</a>
+                            <form action="/message/delete" method="POST" onsubmit="return confirm('Supprimer ce message définitivement ?');" style="display: inline;">
+                                <input type="hidden" name="message_id" value="{{.Id}}">
+                                <input type="hidden" name="fil_id" value="{{$.IdFil}}">
+                                <button type="submit">Supprimer</button>
+                            </form>
                         </div>
                         <div class="score">
                             <form action="/message/reaction" method="POST" style="display:inline;">

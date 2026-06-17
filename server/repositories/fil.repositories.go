@@ -288,7 +288,7 @@ func (r *FilRepository) UpdateFilById(fil models.Fil) error {
 	return nil
 }
 
-func (r *FilRepository) DeleteFiltById(id int) error {
+func (r *FilRepository) DeleteFilById(id int) error {
 	sqlResult, sqlErr := r.db.Exec("DELETE FROM fils WHERE id=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression fil - Erreur : \n\t %s", sqlErr.Error())
@@ -324,6 +324,19 @@ func (r *FilRepository) UpdateMessageById(message models.Message) error {
 
 	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
 		return fmt.Errorf(" Erreur modification message - Aucune ligne modifiée")
+	}
+
+	return nil
+}
+
+func (r *FilRepository) DeleteMessage(id int) error {
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM messages WHERE id=?;", id)
+	if sqlErr != nil {
+		return fmt.Errorf(" Erreur suppression message - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
+		return fmt.Errorf(" Erreur suppression message - Aucun message supprime")
 	}
 
 	return nil

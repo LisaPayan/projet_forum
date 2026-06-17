@@ -308,3 +308,42 @@ func (c *FilControllers) UpdateMessageById(w http.ResponseWriter, r *http.Reques
 		"message": "Message modifié avec succès",
 	})
 }
+
+func (c *FilControllers) DeleteMessage(w http.ResponseWriter, r *http.Request) {
+	userData, _ := r.Context().Value("user").(*auth.Claims)
+
+	var message models.Message
+	if err := json.NewDecoder(r.Body).Decode(&message); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+		return
+	}
+
+	if message.Id == 0 {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant du message manquant dans les données")
+		return
+	}
+
+	userConnecteId, _ := strconv.Atoi(userData.UserID)
+	isAdmin := userData.Role == "admin"
+
+	idProprietaire, errOwner := c.service.GetMessageOwner(message.Id)
+	if errOwner != nil {
+		helper.WriteError(w, http.StatusNotFound, "Message introuvable")
+		return
+	}
+
+	if userConnecteId != idProprietaire && !isAdmin {
+		helper.WriteError(w, http.StatusForbidden, "Action refusée : Vous n'avez pas les droits pour supprimer ce message")
+		return
+	}
+
+	messageErr := c.service.DeleteMessage(message.Id)
+	if messageErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, messageErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "Message supprime",
+	})
+}
