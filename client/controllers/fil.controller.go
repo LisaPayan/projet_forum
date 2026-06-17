@@ -422,7 +422,10 @@ func (c *FilControllers) DisplayPaginationMessage(w http.ResponseWriter, r *http
 	if nbr_vis == "" {
 		nbr_vis = "10"
 	}
-	data, err := c.service.ReadByIdMessages(idFil)
+
+	tri := r.FormValue("tri")
+
+	data, err := c.service.ReadByIdMessages(idFil, tri)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -471,6 +474,7 @@ func (c *FilControllers) DisplayPaginationMessage(w http.ResponseWriter, r *http
 		Prev:   prevPage,
 		NbrVis: nbr_vis,
 		Data:   SelectMessages,
+		Tri:    tri,
 	}
 
 	c.template.RenderTemplate(w, r, "details_fil", vieData)
@@ -572,21 +576,6 @@ func (c *FilControllers) DisplaySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.template.RenderTemplate(w, r, "search", vieData)
-}
-
-func (c *FilControllers) DisplayTriMessageChrono(w http.ResponseWriter, r *http.Request) {
-	idFil, idFilErr := strconv.Atoi(mux.Vars(r)["id"])
-	if idFilErr != nil {
-		http.Error(w, "Erreur - Identifiant produit invalide", http.StatusBadRequest)
-		return
-	}
-	fil, filErr := c.service.ReadByIdMessages(idFil)
-	if filErr != nil {
-		http.Error(w, filErr.Error(), http.StatusInternalServerError)
-		return
-	}
-	c.template.RenderTemplate(w, r, "", fil)
-
 }
 
 func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {

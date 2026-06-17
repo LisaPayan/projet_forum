@@ -128,8 +128,8 @@ func (api *FilApi) ReadById(id int) (dto.FilDto, error) {
 	return fil, nil
 }
 
-func (api *FilApi) ReadByIdMessages(id int) ([]dto.MessageDto, error) {
-	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fil/"+strconv.Itoa(id)+"/messages", nil)
+func (api *FilApi) ReadByIdMessages(id int, tri string) ([]dto.MessageDto, error) {
+	req, err := http.NewRequest(http.MethodGet, api.baseURL+"/fil/"+strconv.Itoa(id)+"/messages?tri="+tri, nil)
 	if err != nil {
 		return nil, err
 	}

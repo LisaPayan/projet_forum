@@ -7,4 +7,5 @@ type PagePaginationMess struct {
 	Prev   int
 	NbrVis string
 	Data   []MessageDto
+	Tri    string
 }

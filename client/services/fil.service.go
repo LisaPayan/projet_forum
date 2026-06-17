@@ -52,12 +52,12 @@ func (s *FilService) ReadById(idFil int) (dto.FilDto, error) {
 	return s.filApi.ReadById(idFil)
 }
 
-func (s *FilService) ReadByIdMessages(idFil int) ([]dto.MessageDto, error) {
+func (s *FilService) ReadByIdMessages(idFil int, tri string) ([]dto.MessageDto, error) {
 	if idFil <= 0 {
 		return []dto.MessageDto{}, fmt.Errorf("Erreur récupération produit - identifiant invalide : %d", idFil)
 	}
 
-	return s.filApi.ReadByIdMessages(idFil)
+	return s.filApi.ReadByIdMessages(idFil, tri)
 }
 
 func (s *FilService) FilsPetanque() ([]dto.FilDto, error) {

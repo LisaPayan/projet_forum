@@ -116,53 +116,9 @@ func (c *FilControllers) GetMessagesByFil(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	messagesList, filErr := c.service.FilByIdMessages(idFil)
-	if filErr != nil {
-		helper.WriteError(w, http.StatusInternalServerError, filErr.Error())
-		return
-	}
+	tri := r.URL.Query().Get("tri")
 
-	if len(messagesList) == 0 {
-		helper.WriteError(w, http.StatusNotFound, "Aucun message trouvé pour ce fil")
-		return
-	}
-
-	helper.WriteJSON(w, http.StatusOK, messagesList)
-	fmt.Println(messagesList)
-
-}
-
-func (c *FilControllers) GetMessagesByFilAnciens(w http.ResponseWriter, r *http.Request) {
-	idFil, idFilErr := readFilId(r)
-	if idFilErr != nil {
-		helper.WriteError(w, http.StatusBadRequest, "Identifiant fil invalide")
-		return
-	}
-
-	messagesList, filErr := c.service.FilByIdMessagesAnciens(idFil)
-	if filErr != nil {
-		helper.WriteError(w, http.StatusInternalServerError, filErr.Error())
-		return
-	}
-
-	if len(messagesList) == 0 {
-		helper.WriteError(w, http.StatusNotFound, "Aucun message trouvé pour ce fil")
-		return
-	}
-
-	helper.WriteJSON(w, http.StatusOK, messagesList)
-	fmt.Println(messagesList)
-
-}
-
-func (c *FilControllers) GetMessagesByFilRecents(w http.ResponseWriter, r *http.Request) {
-	idFil, idFilErr := readFilId(r)
-	if idFilErr != nil {
-		helper.WriteError(w, http.StatusBadRequest, "Identifiant fil invalide")
-		return
-	}
-
-	messagesList, filErr := c.service.FilByIdMessagesRecents(idFil)
+	messagesList, filErr := c.service.FilByIdMessages(idFil, tri)
 	if filErr != nil {
 		helper.WriteError(w, http.StatusInternalServerError, filErr.Error())
 		return

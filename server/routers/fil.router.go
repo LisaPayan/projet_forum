@@ -19,6 +19,3 @@ func RegisterFilRoutes(r *mux.Router, filController *controllers.FilControllers)
 	r.Handle("/fil/{id}/messages", middleware.AuthMiddleware(http.HandlerFunc(filController.CreateMessage))).Methods("POST")
 	r.Handle("/message/reaction", middleware.AuthMiddleware(http.HandlerFunc(filController.AjoutReaction))).Methods("POST")
 }
-
-// r.HandleFunc("/fil/{id}/messages?ord=asc", filController.GetMessagesByFilAnciens).Methods("GET")
-// r.HandleFunc("/fil/{id}/messages?ord=desc", filController.GetMessagesByFilRecents).Methods("GET")

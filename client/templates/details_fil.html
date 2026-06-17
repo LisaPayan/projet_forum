@@ -11,6 +11,23 @@
 </head>
 
 <body>
+
+    <div class="sorting-section" style="margin: 20px; display: flex; gap: 10px; align-items: center;">
+    <span>Trier les messages :</span>
+    
+    <a href="/fil/{{.IdFil}}/messages?tri=chronologique&nbr_vis={{.NbrVis}}&page=0">
+        <button type="button" class="btn_tri {{if or (eq .Tri "") (eq .Tri "chronologique")}}active{{end}}">Chronologique</button>
+    </a>
+
+    <a href="/fil/{{.IdFil}}/messages?tri=recent&nbr_vis={{.NbrVis}}&page=0">
+        <button type="button" class="btn_tri {{if eq .Tri "recent"}}active{{end}}">Plus récents</button>
+    </a>
+
+    <a href="/fil/{{.IdFil}}/messages?tri=popularite&nbr_vis={{.NbrVis}}&page=0">
+        <button type="button" class="btn_tri {{if eq .Tri "popularite"}}active{{end}}">Top Popularité</button>
+    </a>
+</div>
+
     <header class="menu">
         <div class="logo"><img src="/assets/img/logo.jpg" alt="Logo"></div>
         <div class="lien">
@@ -58,6 +75,10 @@
 
             <div class="pagination-limit">
                 <form method="GET" action="/fil/{{.IdFil}}/messages">
+                    <input type="hidden" name="tri" value="{{.Tri}}">
+        
+                    <input type="hidden" name="page" value="0">
+                    
                     <label for="nbr_vis">Afficher par lot de :</label>
                     <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
                         <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 messages (Défaut)</option>

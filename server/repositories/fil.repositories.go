@@ -73,51 +73,7 @@ func (r *FilRepository) ReadById(id int) (models.Fil, error) {
 	return fil, nil
 }
 
-func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
-	var listMessages []models.Message
-
-	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
-
-	sqlResult, sqlErr := r.db.Query(query, idFil)
-	if sqlErr != nil {
-		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
-	}
-	defer sqlResult.Close()
-	for sqlResult.Next() {
-		var message models.Message
-
-		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
-		if errScan != nil {
-			continue
-		}
-		listMessages = append(listMessages, message)
-	}
-	return listMessages, nil
-}
-
-func (r *FilRepository) FilByIdMessagesAnciens(idFil int) ([]models.Message, error) {
-	var listMessages []models.Message
-
-	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
-
-	sqlResult, sqlErr := r.db.Query(query, idFil)
-	if sqlErr != nil {
-		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
-	}
-	defer sqlResult.Close()
-	for sqlResult.Next() {
-		var message models.Message
-
-		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
-		if errScan != nil {
-			continue
-		}
-		listMessages = append(listMessages, message)
-	}
-	return listMessages, nil
-}
-
-func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
+func (r *FilRepository) FilByIdMessages(idFil int, tri string) ([]models.Message, error) {
 	var listMessages []models.Message
 
 	query := `SELECT m.id,
@@ -136,8 +92,22 @@ func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	LEFT JOIN reactions r ON m.id = r.fk_message
 	WHERE m.fk_fil = ? AND f.statut != 'archivé' 
 	GROUP BY m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id
-    ORDER BY m.date_publication DESC;
 	`
+	switch tri {
+	case "popularite":
+
+		query += "ORDER BY score_popularite DESC, m.date_publication ASC;"
+
+	case "recent":
+		query += "ORDER BY m.date_publication DESC;"
+
+	case "chronologique":
+		query += "ORDER BY m.date_publication ASC;"
+
+	default:
+		query += "ORDER BY m.date_publication ASC;"
+	}
+
 	sqlResult, sqlErr := r.db.Query(query, idFil)
 	if sqlErr != nil {
 		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
