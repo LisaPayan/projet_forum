@@ -191,3 +191,27 @@ func (api *FilApi) FilsNature() ([]dto.FilDto, error) {
 	fmt.Println(list)
 	return list, nil
 }
+
+func (api *FilApi) AjoutReaction(reaction dto.Reaction, token string) (int, dto.Reaction, error) {
+
+	payload, err := json.Marshal(reaction)
+	if err != nil {
+		return -1, dto.Reaction{}, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, api.baseURL+"/message/reaction", bytes.NewReader(payload))
+	if err != nil {
+		return 0, dto.Reaction{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	var created dto.Reaction
+	_, err = api.executeRequest(req, &created)
+	if err != nil {
+		return 0, dto.Reaction{}, err
+	}
+
+	return 1, created, nil
+}

@@ -71,3 +71,19 @@ func (s *FilService) FilsCuisine() ([]dto.FilDto, error) {
 func (s *FilService) FilsNature() ([]dto.FilDto, error) {
 	return s.filApi.FilsNature()
 }
+
+func (s *FilService) AjoutReaction(reaction dto.Reaction, token string) (int, error) {
+	if reaction.Message_c.Id == 0 || reaction.Type_reac == "" {
+		return -1, fmt.Errorf(" Erreur reaction - Données manquantes ou invalides")
+	}
+
+	if reaction.Type_reac != "like" && reaction.Type_reac != "dislike" {
+		return -1, fmt.Errorf(" Erreur réaction - Type de réaction invalide")
+	}
+	reac, _, err := s.filApi.AjoutReaction(reaction, token)
+	if err != nil {
+		return -1, err
+	}
+
+	return reac, nil
+}

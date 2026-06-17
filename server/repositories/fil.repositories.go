@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"projet_forum/models"
+	"strings"
 	"time"
 )
 
@@ -119,8 +120,24 @@ func (r *FilRepository) FilByIdMessagesAnciens(idFil int) ([]models.Message, err
 func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 
-	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication DESC; "
-
+	query := `SELECT m.id,
+	m.contenu,
+	m.date_publication,
+	u.pseudo,
+	f.titre,
+	t.id,
+	COUNT(CASE WHEN r.type_reaction = 'like' THEN 1 END) AS nb_likes,
+    COUNT(CASE WHEN r.type_reaction = 'dislike' THEN 1 END) AS nb_dislikes,
+	(COUNT(CASE WHEN r.type_reaction = 'like' THEN 1 END) - COUNT(CASE WHEN r.type_reaction = 'dislike' THEN 1 END)) AS score_popularite
+	FROM messages m 
+	LEFT JOIN users u ON m.fk_user = u.id 
+	LEFT JOIN fils f ON m.fk_fil = f.id 
+	LEFT JOIN tags t ON f.fk_tag = t.id 
+	LEFT JOIN reactions r ON m.id = r.fk_message
+	WHERE m.fk_fil = ? AND f.statut != 'archivé' 
+	GROUP BY m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id
+    ORDER BY m.date_publication DESC;
+	`
 	sqlResult, sqlErr := r.db.Query(query, idFil)
 	if sqlErr != nil {
 		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
@@ -129,7 +146,7 @@ func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, err
 	for sqlResult.Next() {
 		var message models.Message
 
-		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
+		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id, &message.NbLikes, &message.NbDislikes, &message.ScorePopularite)
 		if errScan != nil {
 			continue
 		}
@@ -223,24 +240,51 @@ func (r *FilRepository) FilsNature() ([]models.Fil, error) {
 	return listFils, nil
 }
 
-// func (r *FilRepository) Like(idMess int) ([]models.Reaction, error) {
-// 	var listMessages []models.Message
+func (r *FilRepository) AjoutReaction(reaction models.Reaction) (int, error) {
+	var currentType string
 
-// 	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
+	query := "SELECT type_reaction FROM reactions WHERE fk_user = ? AND fk_message = ?; "
 
-// 	sqlResult, sqlErr := r.db.Query(query, idMess)
-// 	if sqlErr != nil {
-// 		return listMessages, fmt.Errorf("Erreur récupération messages - Erreur: \n\t %s", sqlErr.Error())
-// 	}
-// 	defer sqlResult.Close()
-// 	for sqlResult.Next() {
-// 		var message models.Message
+	err := r.db.QueryRow(query,
+		reaction.User_c.Id,
+		reaction.Message_c.Id).Scan(&currentType)
 
-// 		errScan := sqlResult.Scan(&message.Id, &message.Contenu, &message.PublishedAt, &message.User_c.Pseudo, &message.Fil_c.Titre, &message.Fil_c.Tag_c.Id)
-// 		if errScan != nil {
-// 			continue
-// 		}
-// 		listMessages = append(listMessages, message)
-// 	}
-// 	return listMessages, nil
-// }
+	if err != nil {
+		if err == sql.ErrNoRows {
+			queryInsert := "INSERT INTO reactions (fk_user, fk_message, type_reaction) VALUES (?, ?, ?);"
+			_, errInsert := r.db.Exec(queryInsert,
+				reaction.User_c.Id,
+				reaction.Message_c.Id,
+				reaction.Type_reac)
+			if errInsert != nil {
+				return -1, fmt.Errorf("Erreur insert réaction: %v", errInsert)
+			}
+			return 1, nil
+		}
+		return -1, fmt.Errorf("Erreur base de données lors de la sélection: %v", err)
+	}
+
+	currentType = strings.TrimSpace(currentType)
+	targetType := strings.TrimSpace(reaction.Type_reac)
+
+	if currentType == targetType {
+		queryDelete := "DELETE FROM reactions WHERE fk_user = ? AND fk_message = ?;"
+		_, errDelete := r.db.Exec(queryDelete,
+			reaction.User_c.Id,
+			reaction.Message_c.Id)
+		if errDelete != nil {
+			return -1, fmt.Errorf("Erreur delete réaction: %v", errDelete)
+		}
+		return 0, nil
+	}
+
+	queryUpdate := "UPDATE reactions SET type_reaction = ? WHERE fk_user = ? AND fk_message = ?;"
+	_, errUpdate := r.db.Exec(queryUpdate,
+		targetType,
+		reaction.User_c.Id,
+		reaction.Message_c.Id)
+	if errUpdate != nil {
+		return -1, fmt.Errorf("Erreur update réaction: %v", errUpdate)
+	}
+	return 1, nil
+}

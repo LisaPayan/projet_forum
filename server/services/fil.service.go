@@ -127,3 +127,19 @@ func (s *FilService) FilsNature() ([]models.Fil, error) {
 
 	return filsList, nil
 }
+
+func (s *FilService) AjoutReaction(reaction models.Reaction) (int, error) {
+	if reaction.User_c.Id == 0 || reaction.Message_c.Id == 0 || reaction.Type_reac == "" {
+		return -1, fmt.Errorf(" Erreur réaction - Données manquantes ou invalides")
+	}
+
+	if reaction.Type_reac != "like" && reaction.Type_reac != "dislike" {
+		return -1, fmt.Errorf(" Erreur réaction - Type de réaction invalide ('like' ou 'dislike')")
+	}
+
+	reac, reacErr := s.filRepository.AjoutReaction(reaction)
+	if reacErr != nil {
+		return -1, reacErr
+	}
+	return reac, nil
+}

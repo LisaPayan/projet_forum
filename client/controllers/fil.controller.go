@@ -5,6 +5,7 @@ import (
 	"client/services"
 	"client/templates"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -284,7 +285,7 @@ func (c *FilControllers) DisplayPaginationCuisine(w http.ResponseWriter, r *http
 	if nbr_vis == "" {
 		nbr_vis = "10"
 	}
-	data, err := c.service.FilsPetanque()
+	data, err := c.service.FilsCuisine()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -586,4 +587,34 @@ func (c *FilControllers) DisplayTriMessageChrono(w http.ResponseWriter, r *http.
 	}
 	c.template.RenderTemplate(w, r, "", fil)
 
+}
+
+func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {
+
+	messageIdStr := r.FormValue("message_id")
+	messagedInt, _ := strconv.Atoi(messageIdStr)
+
+	typeReaction := r.FormValue("type_reaction")
+	filIdStr := r.FormValue("fil_id")
+
+	newReac := dto.Reaction{}
+	newReac.Message_c.Id = messagedInt
+	newReac.Type_reac = typeReaction
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	_, err = c.service.AjoutReaction(newReac, cookie.Value)
+	if err != nil {
+		log.Println(" ERREUR REACTION CONTROLLER :", err)
+		destination := "/fil/" + filIdStr + "/messages"
+		http.Redirect(w, r, destination, http.StatusSeeOther)
+		return
+	}
+
+	destination := "/fil/" + filIdStr + "/messages"
+	http.Redirect(w, r, destination, http.StatusSeeOther)
 }

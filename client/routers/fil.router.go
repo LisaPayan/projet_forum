@@ -20,6 +20,8 @@ func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControll
 	r.HandleFunc("/fil/{id}/messages", filController.DisplayPaginationMessage).Methods("GET")
 	r.Handle("/fil/{id}/messages", middleware.AuthMiddleware(http.HandlerFunc(filController.CreateMessage))).Methods("POST")
 
+	r.Handle("/message/reaction", middleware.AuthMiddleware(http.HandlerFunc(filController.AjoutReaction))).Methods("POST")
+
 	r.Handle("/fils/create", middleware.AuthMiddleware(http.HandlerFunc(filController.CreateForm))).Methods("GET")
 	r.Handle("/fils", middleware.AuthMiddleware(http.HandlerFunc(filController.Create))).Methods("POST")
 

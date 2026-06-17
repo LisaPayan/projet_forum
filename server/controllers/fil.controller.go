@@ -210,3 +210,30 @@ func (c *FilControllers) FilsNature(w http.ResponseWriter, r *http.Request) {
 	helper.WriteJSON(w, http.StatusOK, filsList)
 	fmt.Println(filsList)
 }
+
+func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {
+	userData, _ := r.Context().Value("user").(*auth.Claims)
+
+	var newReaction models.Reaction
+	if err := json.NewDecoder(r.Body).Decode(&newReaction); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+		return
+	}
+
+	userId, _ := strconv.Atoi(userData.UserID)
+	newReaction.User_c.Id = userId
+	// newReaction.Message_c.Id = messageId
+
+	reac, reacErr := c.service.AjoutReaction(newReaction)
+	if reacErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, reacErr.Error())
+		return
+	}
+
+	// helper.WriteJSON(w, http.StatusCreated, fil)
+	if reac == 0 {
+		helper.WriteJSON(w, http.StatusOK, map[string]string{"message": "réaction annulée avec succès"})
+	} else {
+		helper.WriteJSON(w, http.StatusOK, map[string]string{"message": "réaction enregistrée avec succès"})
+	}
+}
