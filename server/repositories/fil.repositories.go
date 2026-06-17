@@ -73,7 +73,7 @@ func (r *FilRepository) ReadById(id int) (models.Fil, error) {
 	return fil, nil
 }
 
-func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
+func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 
 	query := "SELECT m.id, m.contenu, m.date_publication, u.pseudo, f.titre, t.id FROM messages m LEFT JOIN users u ON m.fk_user = u.id LEFT JOIN fils f ON m.fk_fil = f.id LEFT JOIN tags t ON f.fk_tag = t.id WHERE m.fk_fil = ? AND f.statut != 'archivé' ORDER BY m.date_publication ASC; "
@@ -117,7 +117,7 @@ func (r *FilRepository) FilByIdMessagesAnciens(idFil int) ([]models.Message, err
 	return listMessages, nil
 }
 
-func (r *FilRepository) FilByIdMessagesRecents(idFil int) ([]models.Message, error) {
+func (r *FilRepository) FilByIdMessages(idFil int) ([]models.Message, error) {
 	var listMessages []models.Message
 
 	query := `SELECT m.id,

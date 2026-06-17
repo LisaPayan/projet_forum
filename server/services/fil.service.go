@@ -67,7 +67,7 @@ func (s *FilService) FilByIdMessages(idFil int) ([]models.Message, error) {
 		return []models.Message{}, fmt.Errorf(" Erreur récupération produit - identifiant invalide : %d", idFil)
 	}
 
-	fil, filErr := s.filRepository.FilByIdMessagesAnciens(idFil)
+	fil, filErr := s.filRepository.FilByIdMessages(idFil)
 	if filErr != nil {
 		return []models.Message{}, filErr
 	}

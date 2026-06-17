@@ -82,7 +82,7 @@
                             <input type="hidden" name="type_reaction" value="like">
                             <button type="submit" class="btn_score">
                                 <img src="/assets/img/like_bleu.jpg" alt="Like">
-                                <span>0</span>
+                                <span>{{(index .Data 0).NbLikes}}</span>
                             </button>
                         </form>
 
@@ -92,7 +92,7 @@
                             <input type="hidden" name="type_reaction" value="dislike">
                             <button type="submit" class="btn_score">
                                 <img src="/assets/img/dislike_bleu.jpg" alt="Dislike">
-                                <span>0</span>
+                                <span>{{(index .Data 0).NbDislikes}}</span>
                             </button>
                         </form>
                     </div>
@@ -117,7 +117,7 @@
                                 <input type="hidden" name="type_reaction" value="like">
                                 <button type="submit" class="btn_score">
                                     <img src="/assets/img/like_creme.jpg" alt="Like">
-                                    <span>0</span>
+                                    <span>{{.NbLikes}}</span>
                                 </button>
                             </form>
 
@@ -127,7 +127,7 @@
                                 <input type="hidden" name="type_reaction" value="dislike">
                                 <button type="submit" class="btn_score">
                                     <img src="/assets/img/dislike_creme.jpg" alt="Dislike">
-                                    <span>0</span>
+                                    <span>{{.NbDislikes}}</span>
                                 </button>
                             </form>
                         </div>
