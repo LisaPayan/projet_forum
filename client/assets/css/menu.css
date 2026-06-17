@@ -199,6 +199,7 @@ a:visited {
 
 .page_menu {
     min-height: 88vh;
+    flex-direction: column;
 }
 
 .pres {
@@ -309,7 +310,7 @@ a:visited {
     margin: 0; 
 }
 
-.form {
+/* .form {
     display: none;
     position: fixed;
     z-index: 9999;
@@ -383,7 +384,7 @@ a:visited {
     padding-bottom: 28px;
     font-style:italic ;
     font-size:small;
-}
+} */
 
 .cont_fils .pagination-limit {
     position: relative; 
@@ -459,4 +460,97 @@ a:visited {
     align-items: center;
     justify-content: flex-end;
     padding-right: 30px;
+}
+
+/* .form_connec {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 30vw;
+    height: 30vh;
+    border: 3px solid #0052CC; 
+    border-radius: 20px;
+    background-color: white;
+} */
+
+.cont_form_login {
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    flex-grow: 1;
+    padding: 40px 0;
+}
+
+.form_connec {
+    background-color: white;
+    border: 3px solid #0052CC;
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 450px; 
+    box-sizing: border-box;
+}
+
+.form_connec form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form_connec .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.form_connec .form-group label {
+    font-weight: 600;
+}
+
+.form_connec input[type="text"], 
+.form_connec input[type="password"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form_connec input[type="text"]:focus, 
+.form_connec input[type="password"]:focus {
+    border-color: #0052CC;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.15);
+}
+
+.form_connec button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.form_connec .switch_log {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: gray;
+}
+
+.form_connec .switch_log a {
+    color: #0052CC;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.form_connec .indic {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-align: left;
 }

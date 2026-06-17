@@ -1,24 +1,84 @@
 {{define "login"}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <link rel="stylesheet" href="/assets/css/menu.css">
+    <title>Se connecter</title>
 </head>
-<body>
-    <form action="/login" method="post">
-        <label for="username">Identifiant</label>
-        <input type="text" name="username" id="username">
 
-        <label for="password">Mot de passe</label>
-        <input type="password" name="password" id="password">
-        {{if .}}
-        <p>{{.}}</p>
-        {{end}}
-        <button type="submit">Valider</button>
-    </form>
-        <p>Pas de compte ? <a href="/register">Inscrivez-vous ici</a>.</p>
+<body>
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
+        <div class="lien">
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()"
+                    title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
+                </div>
+                <button type="button" class="dropdown-btn"><a href="/all"
+                        title="clique ici pour voir tous les fils de discussion">All</a></button>
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
+            </div>
+        </div>
+        <div class="connexion">
+            <a href="/login" title="clique ici pour te connecter">
+                <h3>Se connecter</h3>
+            </a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
+        </div>
+    </header>
+    <main>
+        <div class="page_menu">
+            <div class="pres">
+                <div>
+                    <h1 class="title">Connectez-vous</h1>
+                </div>
+                <div>
+                    <h4>Vous pourrez alors faire beaucoup de choses que simplement regarder...</h4>
+                </div>
+            </div>
+
+            <div class="cont_form_login">
+                <div class="form_connec">
+                    <form action="/login" method="post">
+                        <div class="form-group">
+                            <label for="username">Identifiant</label>
+                            <input type="text" name="username" id="username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" name="password" id="password" required>
+                        </div>
+
+                        {{if .}}
+                        <p class="indic">{{.}}</p>
+                        {{end}}
+
+                        <button class="btn" type="submit">Valider</button>
+                    </form>
+                    
+                    <p class="switch_log">Pas de compte ? <a href="/register">Inscrivez-vous ici</a>.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/assets/js/script.js"></script>
 </body>
+
 </html>
 {{end}}
