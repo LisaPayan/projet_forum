@@ -198,7 +198,6 @@ a:visited {
 }
 
 .page_menu {
-    
     min-height: 88vh;
 }
 
@@ -222,6 +221,7 @@ a:visited {
     margin-bottom: 2vh;
     align-items: center;
     justify-content: space-evenly;
+    flex-grow: 1;
 }
 
 .fil {
@@ -385,9 +385,78 @@ a:visited {
     font-size:small;
 }
 
-.pagination-limit {
-    color: #0052cc;
-    font-size: x-large;
-    font-weight: bold;
+.cont_fils .pagination-limit {
+    position: relative; 
+    align-self: flex-start; 
+    width: auto; 
+    margin-left: 10%; 
+    margin-top: 10px;
+    margin-bottom: 20px; 
 }
 
+.pagination-limit form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #0052CC;
+}
+
+.pagination-limit h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.pagination-limit select {
+    background-color: white;
+    color: #0052CC; 
+    border: 2px solid #0052CC; 
+    border-radius: 12px; 
+    padding: 8px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+.pagination-limit select:hover {
+    background-color: #e3ebf8; 
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items: center;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 30px; 
+    width: 100%;;
+
+}
+
+.gauche {
+    width: 35vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 30px;
+}
+.nbr {
+    width: 30vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 35vw;
+    margin-right: 35vw;
+
+}
+
+.droite {
+    width: 35vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 30px;
+}

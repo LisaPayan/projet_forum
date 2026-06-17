@@ -6,28 +6,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
-    <title>Soulèu</title>
+    <title>Tous les fils</title>
 </head>
 
-<body class="back_g">
-
+<body>
     <header class="menu">
-        <div class="logo"><img src="../assets/img/logo.jpg" alt="Logo"></div>
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
         <div class="lien">
             <div class="dropdown">
-                <button class="dropdown-btn" onclick="toggleDropdown()">Sujets</button>
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()" title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
                 <div id="dropdown-menu" class="dropdown-content">
-                    <a href="/fils/petanque">Pétanque</a>
-                    <a href="/fils/cuisine">Cuisine</a>
-                    <a href="/fils/nature">Nature</a>
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
                 </div>
+                <button type="button" class="dropdown-btn"><a href="/all" title="clique ici pour voir tous les fils de discussion">All</a></button>
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
             </div>
         </div>
         <div class="connexion">
-            <a>
+            <a href="/login" title="clique ici pour te connecter">
                 <h3>Se connecter</h3>
             </a>
-            <a><button class="btn">S'inscrire</button></a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
         </div>
     </header>
 
@@ -40,10 +49,11 @@
                 <div>
                     <h4>Retrouvez ici tous nos fils de discussions. Une question ? Besoin de rechercher quelque chose ? Bonne nouvelle, vous êtes au bon endroit !</h4>
                 </div>
-                <div><button class="btn">+ fil de discussion</button></div>
+                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil de discussion</button></a></div>
             </div>
 
-            <div class="pagination-limit">
+            <div class="cont_fils">
+                <div class="pagination-limit">
                 <form method="GET" action="/all">
                     <label for="nbr_vis"><h2>Afficher par lot de :</h2></label>
                     <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
@@ -55,7 +65,6 @@
                 </form>
             </div>
 
-            <div class="cont_fils">
                 {{range .Data}}
                 <div class="fil">
                     <div class="img_tag">
@@ -69,11 +78,21 @@
                     </div>
                     <div class="carac">
                         <div class="title">
-                            <a href="/fil/{{.Id}}/messages">
+                            <a href="/fil/{{.Id}}/messages" title="clique ici pour voir {{.Titre}}">
                                 <h2>{{.Titre}}</h2>
                             </a>
                         </div>
-                        <div>{{.User_c.Pseudo}}</div>
+                        <div class="carac_autre">
+                            <div class="nom">
+                                {{.User_c.Pseudo}}
+                            </div>
+                            <div class="action">
+                                <a href="/fil/{{.Id}}/edit" title="clique ici pour modifier ce fil">Modifier</a>
+                                <form action="/fil/{{.Id}}/delete" method="POST" title="clique ici pour supprimer ce fil" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fil ?');">
+                                    <button class="btn_sup" type="submit" >Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {{end}}
@@ -81,7 +100,7 @@
 
             <div class="pagination">
                 {{if gt .Page 0}}
-                <div>
+                <div class="gauche">
                     <a href="/all?page={{.Prev}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets précédents">Précédent</button>
@@ -89,12 +108,12 @@
                 </div>
                 {{end}}
 
-                <div>
+                <div class="nbr">
                     <p>Page {{.Page}}</p>
                 </div>
 
                 {{if gt .Next .Page}}
-                <div>
+                <div class="droite">
                     <a href="/all?page={{.Next}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets suivants">Suivant</button>
