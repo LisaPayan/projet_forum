@@ -137,3 +137,15 @@ func (s *FilService) DeleteFilById(idFil int) error {
 
 	return s.filRepository.DeleteFiltById(idFil)
 }
+
+func (s *FilService) GetMessageOwner(idMessage int) (int, error) {
+	return s.filRepository.GetMessageOwner(idMessage)
+}
+
+func (s *FilService) UpdateMessageById(message models.Message) error {
+	if message.Id == 0 || message.Contenu == "" {
+		return fmt.Errorf(" Erreur modification message - Donnees manquantes ou invalides")
+	}
+
+	return s.filRepository.UpdateMessageById(message)
+}

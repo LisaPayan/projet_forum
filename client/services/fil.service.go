@@ -106,3 +106,14 @@ func (s *FilService) DeleteFilById(idFil int, token string) error {
 
 	return s.filApi.DeleteFilById(idFil, token)
 }
+
+func (s *FilService) UpdateMessageById(message dto.MessageDto, token string) error {
+	if message.Id <= 0 {
+		return fmt.Errorf("Erreur modification message - Identifiant invalide")
+	}
+	if message.Contenu == "" {
+		return fmt.Errorf("Erreur modification message - Données manquantes ou invalides")
+	}
+
+	return s.filApi.UpdateMessageById(message, token)
+}

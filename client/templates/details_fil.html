@@ -130,6 +130,7 @@
                         <div class="mess autre_mess">
                             <div>{{ .Contenu }}</div>
                             <div>{{ .User_c.Pseudo }}</div>
+                            <a href="/message/edit?message_id={{ .Id }}&fil_id={{ $.IdFil }}&contenu={{ .Contenu }}">Modifier</a>
                         </div>
                         <div class="score">
                             <form action="/message/reaction" method="POST" style="display:inline;">

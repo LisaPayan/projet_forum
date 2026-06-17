@@ -1,0 +1,31 @@
+{{define "message_update"}}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier mon message</title>
+    <link rel="stylesheet" href="/assets/css/menu.css">
+</head>
+<body>
+    <div>
+        <h2>Modifier votre message</h2>
+
+        <form action="/message/update" method="POST">
+            
+            <input type="hidden" name="message_id" value="{{ .MessageId }}">
+            <input type="hidden" name="fil_id" value="{{ .IdFil }}">
+
+            <div style="margin-bottom: 15px;">
+                <label for="contenu">Votre message :</label>
+                <textarea name="contenu" id="contenu" rows="6" required>{{ .ContenuActuel }}</textarea>
+            </div>
+
+            <button type="submit">
+                Enregistrer les modifications
+            </button>
+            <a href="/fil/{{ .IdFil }}/messages" >Annuler</a>
+        </form>
+    </div>
+</body>
+</html>
+{{end}}

@@ -270,3 +270,41 @@ func (c *FilControllers) DeleteFilById(w http.ResponseWriter, r *http.Request) {
 		"message": "Fil supprime",
 	})
 }
+
+func (c *FilControllers) UpdateMessageById(w http.ResponseWriter, r *http.Request) {
+	userData, _ := r.Context().Value("user").(*auth.Claims)
+
+	var message models.Message
+	if err := json.NewDecoder(r.Body).Decode(&message); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+		return
+	}
+
+	if message.Id == 0 {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant du message manquant dans les données")
+		return
+	}
+
+	userConnecteId, _ := strconv.Atoi(userData.UserID)
+
+	idProprietaire, errOwner := c.service.GetMessageOwner(message.Id)
+	if errOwner != nil {
+		helper.WriteError(w, http.StatusNotFound, "Message introuvable")
+		return
+	}
+
+	if userConnecteId != idProprietaire {
+		helper.WriteError(w, http.StatusForbidden, "Action refusée : Vous n'êtes pas le propriétaire de ce message")
+		return
+	}
+
+	messageErr := c.service.UpdateMessageById(message)
+	if messageErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, messageErr.Error())
+		return
+	}
+
+	helper.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "Message modifié avec succès",
+	})
+}

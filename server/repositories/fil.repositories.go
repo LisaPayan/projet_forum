@@ -300,3 +300,31 @@ func (r *FilRepository) DeleteFiltById(id int) error {
 
 	return nil
 }
+
+func (r *FilRepository) GetMessageOwner(idMessage int) (int, error) {
+	var userID int
+	query := "SELECT fk_user FROM messages WHERE id = ?;"
+	err := r.db.QueryRow(query, idMessage).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+func (r *FilRepository) UpdateMessageById(message models.Message) error {
+	query := "UPDATE messages SET contenu=? WHERE id=?;"
+
+	sqlResult, sqlErr := r.db.Exec(query,
+		message.Contenu,
+		message.Id)
+
+	if sqlErr != nil {
+		return fmt.Errorf(" Erreur modification message - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
+		return fmt.Errorf(" Erreur modification message - Aucune ligne modifiée")
+	}
+
+	return nil
+}

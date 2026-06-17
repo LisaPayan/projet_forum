@@ -663,3 +663,42 @@ func (c *FilControllers) DeleteFilById(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/all", http.StatusSeeOther)
 }
+
+func (c *FilControllers) UpdateFormMessage(w http.ResponseWriter, r *http.Request) {
+	idMessageStr := r.URL.Query().Get("message_id")
+	idFilStr := r.URL.Query().Get("fil_id")
+	contenuActuel := r.URL.Query().Get("contenu")
+
+	c.template.RenderTemplate(w, r, "message_update", map[string]interface{}{
+		"MessageId":     idMessageStr,
+		"IdFil":         idFilStr,
+		"ContenuActuel": contenuActuel,
+	})
+}
+
+func (c *FilControllers) UpdateMessageById(w http.ResponseWriter, r *http.Request) {
+	idMessageStr := r.FormValue("message_id")
+	idMessage, _ := strconv.Atoi(idMessageStr)
+
+	nouveauContenu := r.FormValue("contenu")
+	idFilStr := r.FormValue("fil_id")
+
+	cookie, err := r.Cookie("access_token")
+	if err != nil || cookie == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	updateMessage := dto.MessageDto{
+		Id:      idMessage,
+		Contenu: nouveauContenu,
+	}
+
+	err = c.service.UpdateMessageById(updateMessage, cookie.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/fil/%s/messages", idFilStr), http.StatusSeeOther)
+}

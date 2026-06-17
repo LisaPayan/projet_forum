@@ -29,4 +29,7 @@ func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControll
 	r.Handle("/fil/{id}/update", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateFilById))).Methods("POST")
 	r.Handle("/fil/{id}/delete", middleware.AuthMiddleware(http.HandlerFunc(filController.DeleteFilById))).Methods("POST")
 
+	r.HandleFunc("/message/edit", filController.UpdateFormMessage).Methods("GET")
+	r.HandleFunc("/message/update", filController.UpdateMessageById).Methods("POST")
+	// r.HandleFunc("/message/{id}/delete", filController.DeleteMessage).Methods("POST")
 }
