@@ -126,7 +126,19 @@ func (r *FilRepository) FilByIdMessages(idFil int, tri string) ([]models.Message
 }
 
 func (r *FilRepository) CreateMessageFil(message models.Message) (int, error) {
-	query := "INSERT INTO `messages` (`contenu`, `date_publication`, `fk_user`, `fk_fil`) VALUES (?,?,?,?);"
+	var statut string
+	checkQuery := "SELECT statut FROM fils WHERE id = ?;"
+
+	err := r.db.QueryRow(checkQuery, message.Fil_c.Id).Scan(&statut)
+	if err != nil {
+		return -1, fmt.Errorf("impossible de vérifier le statut du fil - Erreur : %s", err.Error())
+	}
+
+	if statut != "ouvert" {
+		return -1, fmt.Errorf("impossible de publier : ce fil de discussion est %s", statut)
+	}
+
+	query := "INSERT INTO `messages` (`contenu`, `date_publication`, `fk_user`, `fk_fil`) VALUES (?,?,?,?) ;"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		message.Contenu,

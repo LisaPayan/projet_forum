@@ -6,7 +6,7 @@ Ce projet s'inscrit dans le cadre de la validation de la première année de Bac
 
 ---
 
-## 👥 Membres de l'équipe
+## Membres de l'équipe
 * **FUENTES Quentin**
 * **PAYAN Lisa**
 
