@@ -31,7 +31,12 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		claims, err := auth.ValidateToken(parts[1])
 		if err != nil {
 			fmt.Println(err)
-			helper.WriteError(w, http.StatusUnauthorized, "nvalid token")
+			helper.WriteError(w, http.StatusUnauthorized, "invalid token")
+			return
+		}
+
+		if claims.IsBan == 1 {
+			helper.WriteError(w, http.StatusForbidden, "votre compte a été banni de la plateforme")
 			return
 		}
 

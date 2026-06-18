@@ -12,16 +12,18 @@ import (
 type Claims struct {
 	UserID string `json:"user_id"`
 	Role   string `json:"role"`
+	IsBan  int    `json:"is_ban"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userID string, role string) (string, error) {
+func GenerateToken(userID string, role string, isBan int) (string, error) {
 	now := time.Now()
 	secret := []byte(config.GetEnvWithDefault("JWT_SECRET", "secret_forum"))
 
 	claims := Claims{
 		UserID: userID,
 		Role:   role,
+		IsBan:  isBan,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			Issuer:    "forum-api",

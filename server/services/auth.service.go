@@ -84,7 +84,7 @@ func (s *AuthService) Login(data dto.LoginRequestDto) (*dto.LoginResponseDto, er
 		role = "admin"
 	}
 
-	token, err := auth.GenerateToken(strconv.Itoa(user.Id), role)
+	token, err := auth.GenerateToken(strconv.Itoa(user.Id), role, user.IsBan)
 	if err != nil {
 		return nil, err
 	}
@@ -140,5 +140,6 @@ func (s *AuthService) GetProfile(userID int64) (*dto.UserResponseDto, error) {
 		Email:   user.Email,
 		Role:    role,
 		IsAdmin: user.IsAdmin == 0,
+		IsBan:   user.IsBan == 0,
 	}, nil
 }
