@@ -1,0 +1,85 @@
+{{define "message_update"}}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/menu.css">
+    <title>Modifier un message</title>
+</head>
+
+<body>
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
+        <div class="lien">
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()"
+                    title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
+                </div>
+                <button type="button" class="dropdown-btn"><a href="/all"
+                        title="clique ici pour voir tous les fils de discussion">All</a></button>
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
+            </div>
+        </div>
+        <div class="connexion">
+            <a href="/login" title="clique ici pour te connecter">
+                <h3>Se connecter</h3>
+            </a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="page_menu">
+            <div class="pres">
+                <div>
+                    <h1 class="title">Modification d'un message</h1>
+                </div>
+                <div>
+                    <h4>Quelque chose ne convient pas, changez-le !</h4>
+                </div>
+            </div>
+
+            <div class="cont_form_login">
+                <div class="form_connec">
+                    <div>
+                        <h2>Modifier votre message</h2>
+                    </div>
+                    <form action="/message/update" method="POST">
+
+                        <input type="hidden" name="message_id" value="{{ .MessageId }}">
+                        <input type="hidden" name="fil_id" value="{{ .IdFil }}">
+
+                        <div class="form-group">
+                            <label for="contenu">Votre message :</label>
+                            <textarea name="contenu" id="contenu" rows="6" required
+                                placeholder="Écrivez votre message ici...">{{ .ContenuActuel }}</textarea>
+                        </div>
+
+                        <button type="submit" class="btn">
+                            Enregistrer les modifications
+                        </button>
+
+                        <p class="switch_log"><a href="/fil/{{ .IdFil }}/messages" title="Annuler la modification">Annuler</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/assets/js/script.js"></script>
+</body>
+</html>
+{{end}}

@@ -1,27 +1,95 @@
 {{define "menu"}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/menu.css">
+    <link rel="stylesheet" href="/assets/css/menu.css">
     <title>Soulèu</title>
 </head>
+
 <body>
-    <header>
-        <!-- <div>
-            <img src="../assets/img/logo.jpg">
-        </div> -->
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
+        <div class="lien">
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()" title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
+                </div>
+                <button type="button" class="dropdown-btn"><a href="/all" title="clique ici pour voir tous les fils de discussion">All</a></button>
+                <!-- <button type="button" class="dropdown-btn"><a href="/dashboard" title="clique ici pour accéder au dashboard admin">Dashboard</a></button> -->
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
+            </div>
+        </div>
+        <div class="connexion">
+            <a href="/login" title="clique ici pour te connecter">
+                <h3>Se connecter</h3>
+            </a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
+        </div>
     </header>
+
     <main>
-        <div>
+        <div class="page_menu">
             <div class="pres">
-                <div><h2>Bienvenue sur Soulèu !</h2></div>
-                <div><h4>le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...</h2></div>
-                <div> + fil de discussion</div>
+                <div>
+                    <h1 class="title">Bienvenue sur Soulèu !</h1>
+                </div>
+                <div>
+                    <h4>Le forum qui sent bon la Provence, on discute de tout : recettes, pétanque, coins secrets...
+                    </h4>
+                </div>
+                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil de discussion</button></a></div>
+            </div>
+
+            <div class="cont_fils">
+                {{range .}}
+                <div class="fil">
+                    <div class="img_tag">
+                        {{if eq .Tag_c.Id 1}}
+                        <img src="/assets/img/petanque.jpg">
+                        {{else if eq .Tag_c.Id 2}}
+                        <img src="/assets/img/cuisine.jpg">
+                        {{else}}
+                        <img src="/assets/img/nature.jpg">
+                        {{end}}
+                    </div>
+                    <div class="carac">
+                        <div class="title">
+                            <a href="/fil/{{.Id}}/messages" title="clique ici pour voir {{.Titre}}">
+                                <h2>{{.Titre}}</h2>
+                            </a>
+                        </div>
+                        <div class="carac_autre">
+                            <div class="nom">
+                                {{.User_c.Pseudo}}
+                            </div>
+                            <div class="action">
+                                <a href="/fil/{{.Id}}/edit" title="clique ici pour modifier ce fil">Modifier</a>
+                                <form action="/fil/{{.Id}}/delete" method="POST" title="clique ici pour supprimer ce fil" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fil ?');">
+                                    <button class="btn_sup" type="submit" >Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
             </div>
         </div>
     </main>
+    <script src="/assets/js/script.js"></script>
 </body>
 </html>
 {{end}}

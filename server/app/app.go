@@ -2,8 +2,10 @@ package app
 
 import (
 	"database/sql"
+	"net/http"
 	"projet_forum/config"
 	"projet_forum/controllers"
+	"projet_forum/helper"
 	"projet_forum/repositories"
 	"projet_forum/routers"
 	"projet_forum/services"
@@ -17,24 +19,30 @@ type App struct {
 }
 
 func InitApp() *App {
-
 	config.LoadEnv()
 
 	db := config.InitDB()
 
-	// Initilisation des repositories
+	// Initialisation des repositories
 	filRepository := repositories.InitFilRepository(db)
+	authRepository := repositories.InitAuthRepository(db)
 
-	// Initilisation des services
+	// Initialisation des services
 	filService := services.InitFilService(filRepository)
+	authService := services.InitAuthService(authRepository)
 
-	// Initilisation des controllers
+	// Initialisation des controllers
 	filController := controllers.InitFilController(filService)
+	authController := controllers.InitAuthController(authService)
 
-	// Enregistrement des routes (avec ajout du préfix "/api/...")
+	// Enregistrement des routes avec le prefixe /api
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
 	routers.RegisterFilRoutes(router, filController)
+	routers.AuthRoutes(router, authController)
+	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		helper.WriteJSON(w, http.StatusOK, "ok")
+	})
 
 	return &App{
 		Db:     db,
