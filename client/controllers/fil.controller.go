@@ -80,6 +80,10 @@ func (c *FilControllers) DisplayList(w http.ResponseWriter, r *http.Request) {
 // 	c.template.RenderTemplate(w, r, "nature", filList)
 // }
 
+func (c *FilControllers) DashboardHandler(w http.ResponseWriter, r *http.Request) {
+	c.template.RenderTemplate(w, r, "dashboard", nil)
+}
+
 func (c *FilControllers) CreateForm(w http.ResponseWriter, r *http.Request) {
 	c.template.RenderTemplate(w, r, "fil_create", nil)
 }

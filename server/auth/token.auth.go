@@ -79,3 +79,10 @@ func ValidateToken(tokenString string) (*Claims, error) {
 	// Le token est valide : on retourne les claims utilisables par l'application.
 	return claims, nil
 }
+
+func IsAdmin(claims *Claims) bool {
+	if claims == nil {
+		return false
+	}
+	return claims.Role == "admin"
+}

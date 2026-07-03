@@ -43,6 +43,12 @@ func (api *AuthApi) Login(data dto.LoginRequestDto) (dto.LoginResponseDto, error
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
+		var errorResult map[string]string
+		if err := json.NewDecoder(resp.Body).Decode(&errorResult); err == nil {
+			if msg, ok := errorResult["error"]; ok {
+				return dto.LoginResponseDto{}, fmt.Errorf("%s", msg)
+			}
+		}
 		return dto.LoginResponseDto{}, fmt.Errorf("Connexion refusee - code %v", resp.StatusCode)
 	}
 
@@ -66,8 +72,11 @@ func (api *AuthApi) Me(token string) (dto.MeResponseDto, error) {
 		log.Printf("Erreur request (auth.me) : %v", requestErr)
 		return dto.MeResponseDto{}, fmt.Errorf("Erreur request (auth.me) : %v", requestErr)
 	}
-	// Le token est envoye dans le header Authorization au format Bearer.
-	request.Header.Set("Authorization", fmt.Sprintf("Bearer %v", token))
+
+	cleanToken := strings.TrimSpace(strings.TrimPrefix(token, "Bearer"))
+
+	// Le token est envoyé proprement au format Bearer.
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", cleanToken))
 
 	response, responseErr := client.Do(request)
 	if responseErr != nil {

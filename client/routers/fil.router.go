@@ -33,4 +33,5 @@ func RegisterProductRoutes(r *mux.Router, filController *controllers.FilControll
 	r.Handle("/message/update", middleware.AuthMiddleware(http.HandlerFunc(filController.UpdateMessageById))).Methods("POST")
 	r.Handle("/message/delete", middleware.AuthMiddleware(http.HandlerFunc(filController.DeleteMessage))).Methods("POST")
 
+	r.Handle("/dashboard", middleware.AuthMiddleware(http.HandlerFunc(filController.DashboardHandler))).Methods("GET")
 }

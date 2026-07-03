@@ -40,6 +40,11 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		if strings.HasPrefix(r.URL.Path, "/dashboard") && strings.ToLower(claims.Role) != "admin" {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
 		// Les claims sont ajoutes au contexte pour etre reutilises par les handlers suivants.
 		ctx := context.WithValue(r.Context(), "user", claims)
 		next.ServeHTTP(w, r.WithContext(ctx))

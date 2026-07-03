@@ -261,6 +261,31 @@ func (api *FilApi) DeleteFilById(id int, token string) error {
 	return nil
 }
 
+func (api *FilApi) UpdateStatutFilById(fil dto.FilDto, token string) error {
+	payload, err := json.Marshal(fil)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, api.baseURL+"/dashboard/fil/"+strconv.Itoa(fil.Id), bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	status, err := api.executeRequest(req, nil)
+	if err != nil {
+		if status == http.StatusNotFound {
+			return fmt.Errorf("Fil introuvable")
+		}
+		return err
+	}
+
+	return nil
+}
+
 func (api *FilApi) UpdateMessageById(message dto.MessageDto, token string) error {
 	payload, err := json.Marshal(message)
 	if err != nil {

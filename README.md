@@ -248,18 +248,14 @@ Dans le premier onglet du terminal dédié au backend, exécutez les commandes s
 ```bash
 cd server
 
-# 1. Nettoyage et synchronisation du module Go
 go mod tidy
 
-# 2. Installation manuelle de chaque paquet requis côté Serveur
-go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  # Le routeur de requêtes (supermux)
-go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)          # Le driver de connexion MySQL pour Wamp
-go get [github.com/joho/godotenv](https://github.com/joho/godotenv)                # Le gestionnaire de fichier de configuration .env
-go get [github.com/golang-jwt/jwt/v5](https://github.com/golang-jwt/jwt/v5)            # Le système de génération de jetons de session (JWT)
-go get filippo.io/edwards25519                 # Dépendance cryptographique requise par MySQL
-go get golang.org/x/text                       # Gestion des encodages et des textes sécurisés
-
-# 3. Lancement du fichier principal
+go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  
+go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)         
+go get [github.com/joho/godotenv](https://github.com/joho/godotenv)               
+go get [github.com/golang-jwt/jwt/v5](https://github.com/golang-jwt/jwt/v5)           
+go get filippo.io/edwards25519             
+go get golang.org/x/text                       
 go run main.go
 ```
 
@@ -269,21 +265,19 @@ Cliquez sur le bouton **`+`** en haut à droite de l'espace terminal de VS Code 
 ```bash
 cd client
 
-# 1. Nettoyage et synchronisation du module Go
+
 go mod tidy
 
-# 2. Installation manuelle de chaque paquet requis côté Client
-go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  # Le routeur de requêtes (supermux)
-go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)          # Le driver MySQL (requis pour les structures communes)
-go get [github.com/joho/godotenv](https://github.com/joho/godotenv)                # Le gestionnaire de fichier de configuration .env
-go get filippo.io/edwards25519                 # Dépendance de sécurité et cryptographie
-go get golang.org/x/text                       # Gestion des encodages de texte pour les templates HTML
+go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  
+go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)         
+go get [github.com/joho/godotenv](https://github.com/joho/godotenv)    
+go get filippo.io/edwards25519                
+go get golang.org/x/text                     
 
-# 3. Lancement du fichier principal frontal
 go run main.go
 ```
 
-> 🖥️ **Accès à l'Interface Utilisateur :** Une fois les deux terminaux lancés, ouvrez votre navigateur internet et rendez-vous sur **`http://localhost:3000`** pour charger l'interface visuelle de **Soulèu** et naviguer sur la plateforme.
+> **Accès à l'Interface Utilisateur :** Une fois les deux terminaux lancés, ouvrez votre navigateur internet et rendez-vous sur **`http://localhost:3000`** pour charger l'interface visuelle de **Soulèu** et naviguer sur la plateforme.
 
 ---
 
@@ -301,7 +295,7 @@ L'application distribue ses interfaces utilisateur et ses formulaires sur le por
 
 ---
 
-### Vues & Actions Sécurisées (Requiert d'être connecté — `AuthMiddleware`)
+### Vues & Actions Sécurisées (Requiert d'être connecté)
 
 #### Recherche
 * **`GET http://localhost:3000/search`** : Permet aux membres d'effectuer une recherche par titre, pseudo ou par catégorie.

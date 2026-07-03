@@ -195,6 +195,47 @@ func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *FilControllers) UpdateFilById(w http.ResponseWriter, r *http.Request) {
+	userData, ok := r.Context().Value("user").(*auth.Claims)
+
+	if !ok || !auth.IsAdmin(userData) {
+		helper.WriteError(w, http.StatusForbidden, "Action refusée : Vous n'avez pas les droits admin")
+		return
+	}
+	idFil, idFilErr := readFilId(r)
+	if idFilErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant fil invalide")
+		return
+	}
+
+	isAdmin := userData.Role == "admin"
+
+	if !isAdmin {
+		helper.WriteError(w, http.StatusForbidden, "Action refusée : Vous n'avez pas les droits pour changer le statut de ce fil")
+		return
+	}
+
+	var fil models.Fil
+	if err := json.NewDecoder(r.Body).Decode(&fil); err != nil {
+		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
+		return
+	}
+	fil.Id = idFil
+
+	filErr := c.service.UpdateStatutFilById(fil)
+	if filErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, filErr.Error())
+		return
+	}
+
+	updatedFil, filErr := c.service.ReadById(idFil)
+	if filErr != nil {
+		helper.WriteError(w, http.StatusInternalServerError, filErr.Error())
+		return
+	}
+	helper.WriteJSON(w, http.StatusOK, updatedFil)
+}
+
+func (c *FilControllers) UpdateStatutFilById(w http.ResponseWriter, r *http.Request) {
 	userData, _ := r.Context().Value("user").(*auth.Claims)
 
 	idFil, idFilErr := readFilId(r)

@@ -300,6 +300,24 @@ func (r *FilRepository) UpdateFilById(fil models.Fil) error {
 	return nil
 }
 
+func (r *FilRepository) UpdateStatutFilById(fil models.Fil) error {
+	query := "UPDATE fils SET statut=? WHERE id=?;"
+
+	sqlResult, sqlErr := r.db.Exec(query,
+		fil.Statut,
+		fil.Id)
+
+	if sqlErr != nil {
+		return fmt.Errorf(" Erreur modification statut fil - Erreur : \n\t %s", sqlErr.Error())
+	}
+
+	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow == 0 {
+		return nil
+	}
+
+	return nil
+}
+
 func (r *FilRepository) DeleteFilById(id int) error {
 	sqlResult, sqlErr := r.db.Exec("DELETE FROM fils WHERE id=?;", id)
 	if sqlErr != nil {

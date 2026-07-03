@@ -138,6 +138,14 @@ func (s *FilService) DeleteFilById(idFil int) error {
 	return s.filRepository.DeleteFilById(idFil)
 }
 
+func (s *FilService) UpdateStatutFilById(fil models.Fil) error {
+	if fil.Id == 0 || fil.Statut == "" {
+		return fmt.Errorf(" Erreur modification statut fil - Donnees manquantes ou invalides")
+	}
+
+	return s.filRepository.UpdateStatutFilById(fil)
+}
+
 func (s *FilService) GetMessageOwner(idMessage int) (int, error) {
 	return s.filRepository.GetMessageOwner(idMessage)
 }
