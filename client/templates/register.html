@@ -1,0 +1,84 @@
+{{define "register"}}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/menu.css">
+    <title>S'inscrire</title>
+</head>
+
+<body>
+    <header class="menu">
+        <div class="logo"><img src="../assets/img/logo.jpg"></div>
+        <div class="lien">
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()"
+                    title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
+                </div>
+                <button type="button" class="dropdown-btn"><a href="/all"
+                        title="clique ici pour voir tous les fils de discussion">All</a></button>
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
+            </div>
+        </div>
+        <div class="connexion">
+            <a href="/login" title="clique ici pour te connecter">
+                <h3>Se connecter</h3>
+            </a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
+        </div>
+    </header>
+    <main>
+        <div class="page_menu">
+            <div class="pres">
+                <div>
+                    <h1 class="title">Inscrivez-vous</h1>
+                </div>
+                <div>
+                    <h4>Vous pourrez ensuite vous connecter</h4>
+                </div>
+            </div>
+
+            <div class="cont_form_login">
+                <div class="form_inscrip">
+                    <div><h2>Créez votre compter</h2></div>
+                    <form action="/register" method="POST">
+                        <div class="form-group">
+                            <label for="pseudo">Pseudo</label>
+                            <input type="text" name="pseudo" id="pseudo" required placeholder="Votre pseudo">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Adresse Email</label>
+                            <input type="email" name="email" id="email" required placeholder="exemple@mail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" name="password" id="password" required placeholder="********">
+                            <div class="ital">
+                                *Minimum 12 caractères, une majuscule et un caractère spécial.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">S'inscrire</button>
+                    </form>
+                    <p style="margin-top: 15px;">Déjà un compte ? <a href="/login" title="clique ici pour te connecter">Connectez-vous ici</a>.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/assets/js/script.js"></script>
+</body>
+</html>
+{{end}}

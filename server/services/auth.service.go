@@ -4,6 +4,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"net/http"
 	"projet_forum/auth"
 	"projet_forum/dto"
@@ -24,6 +25,7 @@ func InitAuthService(authRepository *repositories.AuthRepository) *AuthService {
 func (s *AuthService) Register(data dto.RegisterRequestDto) (*dto.RegisterResponseDto, error) {
 	data.Pseudo = strings.TrimSpace(data.Pseudo)
 	data.Email = strings.TrimSpace(data.Email)
+	fmt.Println(data)
 
 	if data.Pseudo == "" || data.Email == "" || data.Password == "" {
 		return nil, errors.New("tous les champs sont obligatoires")
@@ -82,12 +84,7 @@ func (s *AuthService) Login(data dto.LoginRequestDto) (*dto.LoginResponseDto, er
 		role = "admin"
 	}
 
-	token, err := auth.GenerateToken(strconv.Itoa(user.Id), role)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.authRepository.SaveToken(user.Id, token)
+	token, err := auth.GenerateToken(strconv.Itoa(user.Id), role, user.IsBan)
 	if err != nil {
 		return nil, err
 	}
@@ -123,4 +120,26 @@ func isPasswordValid(password string) bool {
 func hashPassword(password string) string {
 	hash := sha512.Sum512([]byte(password))
 	return hex.EncodeToString(hash[:])
+}
+
+func (s *AuthService) GetProfile(userID int64) (*dto.UserResponseDto, error) {
+	user, err := s.authRepository.FindByUsernameOrEmail(strconv.FormatInt(userID, 10))
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	role := "user"
+	if user.IsAdmin == 1 {
+		role = "admin"
+	}
+
+	// On retourne le beau DTO tout propre
+	return &dto.UserResponseDto{
+		Id:      int64(user.Id),
+		Pseudo:  user.Pseudo,
+		Email:   user.Email,
+		Role:    role,
+		IsAdmin: user.IsAdmin == 0,
+		IsBan:   user.IsBan == 0,
+	}, nil
 }

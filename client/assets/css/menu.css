@@ -7,9 +7,22 @@ body {
     background-color: #faf7ee;
 }
 
+a {
+    outline: none;
+    text-decoration: none;
+}
+
+a:link {
+  color: #0052CC;
+}
+
+a:visited {
+  color: #0052CC;
+}
+
 .menu {
     height: 12vh;
-    width: 100vw;
+    max-width: 100vw;
     position: relative;
     /* position: fixed; */
     display: flex;
@@ -34,9 +47,107 @@ body {
 .lien {
     box-sizing:border-box;
     height: 100%;
-    width: 60%;
+    width: 22%;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdown {
+    position: relative; 
+}
+
+.dropdown-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0052CC;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.dropdown-content {
+    display: none; 
+    position: absolute;
+    top: 110%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    background-color: white;
+    min-width: 160px;
+    border: 2px solid #0052CC;
+    border-radius: 12px;
+    overflow: hidden; 
+    padding: 6px 0;
+}
+
+.dropdown-content a {
+    color: #0052CC;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.dropdown-content a:hover {
+    background-color: #e3ebf8; 
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.content_search {
+    box-sizing:border-box;
+    height: 100%;
+    width: 38%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.div_search input[type="text"]{
+    /* width: 100%; */
+    padding: 10px 25px;
+    border: 2px solid #0052CC;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* .search_barre {
+    border-radius: 20px;
+    border: 2px solid #0052CC;
+    padding: 10px 25px;
+    font-size: 1rem;
+} */
+
+.search_barre :focus {
+    border: 3px solid #0052CC;
+    background-color: #e3ebf8;
+}
+
+.button_search {
+    border: 0;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: #faf7ee;
+    border-radius: 18px;
+    background-color: #0052CC;
+    border: 2px solid #0052CC; 
+}
+
+.button_search:hover {
+  background-color: #faf7ee;
+  color: #0052CC;
+  border: 2px solid #0052CC;
 }
 
 .connexion {
@@ -69,15 +180,41 @@ body {
   border: 2px solid #0052CC;
 }
 
+.btn a {
+    color: #faf7ee;
+}
+
+.btn_sup {
+    border: 0;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    border-radius: 18px;
+    background-color: #0052CC;
+    border: 2px solid #0052CC;
+}
+
+.btn_sup:hover {
+  background-color: white;
+  color: #0052CC;
+  border: 2px solid #0052CC;
+}
+
+.action a {
+    font-weight: bold;
+
+}
 
 .page_menu {
-    
     min-height: 88vh;
+    flex-direction: column;
 }
 
 .pres {
     height: 25vh;
-    width: 100vw;
+    width: 98.9vw;
     background-color: white;  
     display: flex;
     flex-direction: column;
@@ -88,24 +225,26 @@ body {
 .cont_fils {
     display:flex;
     min-height: 55vh;
-    width: 95vw;
+    width: 98.9vw;
     flex-direction: column;
     gap: 2vh;
     margin-top: 2vh;
+    margin-bottom: 2vh;
     align-items: center;
     justify-content: space-evenly;
+    flex-grow: 1;
 }
 
 .fil {
     box-sizing: border-box;
-    height: 20%;
+    height: 15vh;
     width: 80%;
     border: 4px solid #0052CC;
     border-radius: 20px;
     display: flex;
     flex-direction: row;
     align-items: center; 
-    padding: 15px;       
+    padding-left: 15px;       
     gap: 20px;
     background-color: white;
 }
@@ -129,12 +268,46 @@ body {
 .carac {
     display: flex;
     flex-direction: column;
-    gap:6px;
+    box-sizing: border-box;
+    width: 90%;
+    height: 100%;
+}
+
+.carac_autre {
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    width: 100%;
+    height: 55%;
+    justify-content: center;
+}
+
+.nom {
+    box-sizing: border-box;
+    width: 70%;
+    height: 100%; 
+    display: flex;
+    align-items: center;
+
+}
+.action {
+    box-sizing: border-box;
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .title {
     color: #0052CC;
     margin-left: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 45%;
+    display: flex;
+    align-items:flex-end
 }
 
 .title a, .title a:visited, .title a:hover {
@@ -145,4 +318,295 @@ body {
 .title a h2 {
     text-decoration: none;
     margin: 0; 
+}
+
+.cont_fils .pagination-limit {
+    position: relative; 
+    align-self: flex-start; 
+    width: auto; 
+    margin-left: 10%; 
+    margin-top: 10px;
+    margin-bottom: 20px; 
+}
+
+.pagination-limit form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #0052CC;
+}
+
+.pagination-limit h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.pagination-limit select {
+    background-color: white;
+    color: #0052CC; 
+    border: 2px solid #0052CC; 
+    border-radius: 12px; 
+    padding: 8px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+.pagination-limit select:hover {
+    background-color: #e3ebf8; 
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items: center;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 30px; 
+    width: 100%;;
+
+}
+
+.gauche {
+    width: 35vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 30px;
+}
+.nbr {
+    width: 30vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 35vw;
+    margin-right: 35vw;
+
+}
+
+.droite {
+    width: 35vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 30px;
+}
+
+.cont_form_login {
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    flex-grow: 1;
+    padding: 40px 0;
+}
+
+.form_connec {
+    background-color: white;
+    border: 3px solid #0052CC;
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 450px; 
+    box-sizing: border-box;
+}
+
+.form_connec h2 {
+    color: #0052CC;
+    padding-bottom: 2vh;
+}
+
+.form_connec form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form_connec .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.form_connec .form-group label {
+    font-weight: 600;
+}
+
+.form_connec input[type="text"], 
+.form_connec input[type="password"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form_connec input[type="text"]:focus, 
+.form_connec input[type="password"]:focus {
+    border-color: #0052CC;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.15);
+}
+
+.form_connec button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.form_connec .switch_log {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: gray;
+}
+
+.form_connec .switch_log a {
+    color: #0052CC;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.form_connec .indic {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form_inscrip {
+    background-color: white;
+    border: 3px solid #0052CC;
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 600px; 
+    box-sizing: border-box;
+}
+
+.form_inscrip h2 {
+    color: #0052CC;
+    margin-top: 0;
+    padding-bottom: 2vh;
+}
+
+.form_inscrip form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form_inscrip .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.form_inscrip .form-group label {
+    font-weight: 600;
+}
+
+.form_inscrip input[type="text"], 
+.form_inscrip input[type="password"],
+.form_inscrip input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    box-sizing: border-box;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form_inscrip input[type="text"]:focus, 
+.form_inscrip input[type="password"]:focus,
+.form_inscrip input[type="email"]:focus {
+    border-color: #0052CC;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.15);
+}
+
+.form_inscrip button[type="submit"] {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.form_inscrip .switch_log {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: gray;
+}
+
+.form_inscrip .switch_log a {
+    color: #0052CC;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.form_inscrip .form-group .indic {
+    color: red;
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.ital {
+    color: red;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.form_connec select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form_connec select:focus {
+    border-color: #0052CC;
+    background-color: white;
+}
+
+.form_connec select option {
+    background-color: white;
+    padding: 10px;
+}
+
+.form_connec textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #72a5f3;
+    border-radius: 10px;
+    background-color: #e3ebf8;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    resize: vertical; 
+}
+
+.form_connec textarea:focus {
+    border-color: #0052CC;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.15);
 }

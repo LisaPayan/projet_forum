@@ -23,14 +23,20 @@ func InitApp() *App {
 
 	baseURL := config.GetRequiredEnv("BASE_URL")
 	filApi := api.InitFilApi(baseURL)
+	authApi := api.InitAuthApi(baseURL)
 
 	filService := services.InitFilService(filApi)
+	authService := services.InitAuthService(authApi)
 
 	filController := controllers.InitFilController(filService, templatesManager)
+	authController := controllers.InitAuthController(authService, templatesManager)
+	cookiesController := controllers.InitCookiesController()
 
 	router := mux.NewRouter()
 	routers.RegisterAssetsRoutes(router)
 	routers.RegisterProductRoutes(router, filController)
+	routers.RegisterAuthRoutes(router, authController)
+	routers.RegisterCookiesRoutes(router, cookiesController)
 
 	return &App{
 		Router: router,

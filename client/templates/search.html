@@ -1,4 +1,4 @@
-{{define "nature"}}
+{{define "search"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,10 +6,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
-    <title>{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Nature{{end}}</title>
+    <title>Résultat(s)</title>
 </head>
 
 <body>
+
+
     <header class="menu">
         <div class="logo"><img src="../assets/img/logo.jpg"></div>
         <div class="lien">
@@ -41,23 +43,24 @@
             <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
         </div>
     </header>
+
     <main>
         <div class="page_menu">
             <div class="pres">
                 <div>
-                    <h1 class="title">{{if .Data}}{{ (index .Data 0).Tag_c.Nom }}{{else}}Nature{{end}}</h1>
+                    <h1 class="title">Résulat(s) de votre recherche</h1>
                 </div>
                 <div>
-                    <h4>{{if .Data}}{{ (index .Data 0).Tag_c.Description }}{{else}}Discutez de tout ce que vous voulez
-                        en rapport avec la nature !{{end}}</h4>
+                    <h4>Voici les résultats de votre recherche. Les résultats portent uniquement sur le titre des
+                        fils de discussions, des pseudos créateurs d'un fil et sur les tags.</h4>
                 </div>
-                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil de
-                            discussion</button></a></div>
+                <div><a href="/fils/create" title="clique ici pour créer un nouveau fil"><button class="btn">+ fil
+                            de discussion</button></a></div>
             </div>
 
             <div class="cont_fils">
                 <div class="pagination-limit">
-                    <form method="GET" action="/fils/nature">
+                    <form method="GET" action="/search">
                         <label for="nbr_vis"><h2>Afficher par lot de :</h2></label>
                         <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
                             <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 éléments (Défaut)</option>
@@ -71,7 +74,13 @@
                 {{range .Data}}
                 <div class="fil">
                     <div class="img_tag">
-                        <img src="/assets/img/nature.jpg">
+                        {{if eq .Tag_c.Id 1}}
+                        <img src="/assets/img/petanque.jpg" alt="Pétanque">
+                        {{else if eq .Tag_c.Id 2}}
+                        <img src="/assets/img/cuisine.jpg" alt="Cuisine">
+                        {{else}}
+                        <img src="/assets/img/nature.jpg" alt="Nature">
+                        {{end}}
                     </div>
                     <div class="carac">
                         <div class="title">
@@ -96,11 +105,10 @@
                 </div>
                 {{end}}
             </div>
-
             <div class="pagination">
                 {{if gt .Page 0}}
                 <div class="gauche">
-                    <a href="/fils/nature?page={{.Prev}}&nbr_vis={{.NbrVis}}">
+                    <a href="/all?page={{.Prev}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets précédents">Précédent</button>
                     </a>
@@ -112,8 +120,8 @@
                 </div>
 
                 {{if gt .Next .Page}}
-                <div  class="droite">
-                    <a href="/fils/nature?page={{.Next}}&nbr_vis={{.NbrVis}}">
+                <div class="droite">
+                    <a href="/all?page={{.Next}}&nbr_vis={{.NbrVis}}">
                         <button class="button_search" type="button"
                             title="Clique ici pour voir les sujets suivants">Suivant</button>
                     </a>

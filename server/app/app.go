@@ -2,8 +2,10 @@ package app
 
 import (
 	"database/sql"
+	"net/http"
 	"projet_forum/config"
 	"projet_forum/controllers"
+	"projet_forum/helper"
 	"projet_forum/repositories"
 	"projet_forum/routers"
 	"projet_forum/services"
@@ -38,6 +40,9 @@ func InitApp() *App {
 
 	routers.RegisterFilRoutes(router, filController)
 	routers.AuthRoutes(router, authController)
+	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		helper.WriteJSON(w, http.StatusOK, "ok")
+	})
 
 	return &App{
 		Db:     db,

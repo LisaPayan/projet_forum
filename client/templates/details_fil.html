@@ -1,93 +1,214 @@
 {{define "details_fil"}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/menu.css">
     <link rel="stylesheet" href="/assets/css/details_fil.css">
-    <title>{{ (index . 0).Fil_c.Titre }}</title>
+    <title>{{if .Data}}{{ (index .Data 0).Fil_c.Titre }}{{else}}Détails Fil{{end}}</title>
 </head>
 
 <body>
     <header class="menu">
-        <div class="logo"><img src="/assets/img/logo.jpg"></div>
+        <div class="logo"><img src="/assets/img/logo.jpg" alt="Logo"></div>
         <div class="lien">
-            <a href="/">Menu</a>
-            <a href="/fils/petanque">Petanque</a>
-            <a href="/fils/cuisine">Cuisine</a>
-            <a href="/fils/nature">Coins secrets</a>
-
+            <div class="dropdown">
+                <button type="button" class="dropdown-btn" onclick="toggleDropdown()" title="clique ici pour voir tous les sujets de discussion">Sujets ▾</button>
+                <div id="dropdown-menu" class="dropdown-content">
+                    <a href="/fils/petanque" title="clique ici pour voir tous les fils de pétanque">Pétanque</a>
+                    <a href="/fils/cuisine" title="clique ici pour voir tous les fils de cuisine">Cuisine</a>
+                    <a href="/fils/nature" title="clique ici pour voir tous les fils de nature">Nature</a>
+                </div>
+                <button type="button" class="dropdown-btn"><a href="/all" title="clique ici pour voir tous les fils de discussion">All</a></button>
+            </div>
+        </div>
+        <div class="content_search">
+            <div class="div_search">
+                <form action="/search" method="get">
+                    <input class="search_barre" type="text" name="query" placeholder="titre, nom créateur, tag">
+                    <button class="button_search" type="submit"
+                        title="Clique ici pour avoir les résultats de ta recherche">Recherche</button>
+                </form>
+            </div>
         </div>
         <div class="connexion">
-            <a>
+            <a href="/login" title="clique ici pour te connecter">
                 <h3>Se connecter</h3>
             </a>
-            <a><button class="btn">S'inscrire</button></a>
+            <a href="/register" title="clique ici pour t'inscrire"><button class="btn">S'inscrire</button></a>
         </div>
     </header>
+    
     <main>
         <div class="contenu">
             <div class="title">
-                {{if eq (index . 0).Fil_c.Tag_c.Id 1}}
-                <img src="/assets/img/petanque.jpg" class="img">
-                {{else if eq (index . 0).Fil_c.Tag_c.Id 2}}
-                <img src="/assets/img/cuisine.jpg" class="img">
-                {{else}}
-                <img src="/assets/img/nature.jpg" class="img">
+                {{if .Data}}
+                    {{if eq (index .Data 0).Fil_c.Tag_c.Id 1}}
+                    <img src="/assets/img/petanque.jpg" class="img" alt="Pétanque">
+                    {{else if eq (index .Data 0).Fil_c.Tag_c.Id 2}}
+                    <img src="/assets/img/cuisine.jpg" class="img" alt="Cuisine">
+                    {{else}}
+                    <img src="/assets/img/nature.jpg" class="img" alt="Nature">
+                    {{end}}
+                    <h1>{{ (index .Data 0).Fil_c.Titre }}</h1>                
                 {{end}}
-                <h1>{{ (index . 0).Fil_c.Titre }}</h1>                
             </div>
+
+            <div class="choix">
+                <div class="sort">
+                    <h2>Trier les messages :</h2>
+                    <a href="/fil/{{.IdFil}}/messages?tri=chronologique&nbr_vis={{.NbrVis}}&page=0">
+                        <button type="button" class="btn_tri {{if or (eq .Tri "") (eq .Tri "chronologique")}}active{{end}}">Chronologique</button>
+                    </a>
+                    <a href="/fil/{{.IdFil}}/messages?tri=recent&nbr_vis={{.NbrVis}}&page=0">
+                        <button type="button" class="btn_tri {{if eq .Tri "recent"}}active{{end}}">Plus récents</button>
+                    </a>
+                    <a href="/fil/{{.IdFil}}/messages?tri=popularite&nbr_vis={{.NbrVis}}&page=0">
+                        <button type="button" class="btn_tri {{if eq .Tri "popularite"}}active{{end}}">Top Popularité</button>
+                    </a>
+                </div>
+
+                <div class="pagination-limit">
+                    <form method="GET" action="/fil/{{.IdFil}}/messages">
+                        <input type="hidden" name="tri" value="{{.Tri}}">
+        
+                        <input type="hidden" name="page" value="0">
+                    
+                        <label for="nbr_vis"><h2>Afficher par lot de :</h2></label>
+                        <select name="nbr_vis" id="nbr_vis" onchange="this.form.submit()">
+                            <option value="10" {{if eq .NbrVis "10" }}selected{{end}}>10 messages (Défaut)</option>
+                            <option value="20" {{if eq .NbrVis "20" }}selected{{end}}>20 messages</option>
+                            <option value="30" {{if eq .NbrVis "30" }}selected{{end}}>30 messages</option>
+                            <option value="all" {{if eq .NbrVis "all" }}selected{{end}}>Tout afficher</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
             <div class="cont_mess">
+                {{if .Data}}
                 <div class="div_mess">
-                    <div class="mess prem_mess">
-                        <div>{{ (index . 0).Contenu }}</div>
-                        <div>{{ (index . 0).User_c.Pseudo }}</div>
+                    <div class="mess prem_mess a_bleu">
+                        <div>{{ (index .Data 0).Contenu }}</div>
+                        <div class="autre_mess-sous">
+                            <div>{{ (index .Data 0).User_c.Pseudo }}</div>
+                            <div class="action_mod a_bleu">
+                                <a href="/message/edit?message_id={{ (index .Data 0).Id }}&fil_id={{ $.IdFil }}&contenu={{ (index .Data 0).Contenu }}">Modifier</a>
+                                <form action="/message/delete" method="POST" onsubmit="return confirm('Supprimer ce message définitivement ?');">
+                                    <input type="hidden" name="message_id" value="{{(index .Data 0).Id}}">
+                                    <input type="hidden" name="fil_id" value="{{$.IdFil}}">
+                                    <button class="btn_bleu" type="submit">Supprimer</button>
+                                </form>    
+                            </div>
+                        </div>  
                     </div>
                     <div class="score">
-                        <button class="btn_score">
-                            <img src="/assets/img/like_bleu.jpg" alt="Like">
-                            <span>12</span> </button>
+                        <form action="/message/reaction" method="POST" style="display:inline;">
+                            <input type="hidden" name="message_id" value="{{ (index .Data 0).Id }}">
+                            <input type="hidden" name="fil_id" value="{{ $.IdFil }}">
+                            <input type="hidden" name="type_reaction" value="like">
+                            <button type="submit" class="btn_score">
+                                <img src="/assets/img/like_bleu.jpg" alt="Like">
+                                <span>{{(index .Data 0).NbLikes}}</span>
+                            </button>
+                        </form>
 
-                        <button class="btn_score">
-                            <img src="/assets/img/dislike_bleu.jpg" alt="Dislike">
-                            <span>2</span> </button>
+                        <form action="/message/reaction" method="POST" style="display:inline;">
+                            <input type="hidden" name="message_id" value="{{ (index .Data 0).Id }}">
+                            <input type="hidden" name="fil_id" value="{{ $.IdFil }}">
+                            <input type="hidden" name="type_reaction" value="dislike">
+                            <button type="submit" class="btn_score">
+                                <img src="/assets/img/dislike_bleu.jpg" alt="Dislike">
+                                <span>{{(index .Data 0).NbDislikes}}</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
+                {{end}}
+
                 <div>
                     <h3>Réponse(s):</h3>
                 </div>
-                {{ range slice . 1}}
-                <div class="div_mess">
-                    <div class="mess autre_mess">
-                        <div>{{ .Contenu }}</div>
-                        <div>{{ .User_c.Pseudo }}</div>
-                    </div>
-                    <div class="score">
-                        <button class="btn_score">
-                            <img src="/assets/img/like_creme.jpg" alt="Like">
-                            <span>12</span> </button>
+                
+                {{if .Data}}
+                    {{ range slice .Data 1 }}
+                    <div class="div_mess">
+                        <div class="mess autre_mess {{if eq .User_c.Id (index $.Data 0).User_c.Id}}a_bleu{{end}}">
+                            <div>{{ .Contenu }}</div>
+                            <div class="autre_mess-sous">
+                                <div>{{ .User_c.Pseudo }}</div>
+                                <div class="action_mod {{if eq .User_c.Id (index $.Data 0).User_c.Id}}a_bleu{{else}}a_creme{{end}}">
+                                    <a href="/message/edit?message_id={{ .Id }}&fil_id={{ $.IdFil }}&contenu={{ .Contenu }}">Modifier</a>
+                                    <form action="/message/delete" method="POST" onsubmit="return confirm('Supprimer ce message définitivement ?');">
+                                        <input type="hidden" name="message_id" value="{{.Id}}">
+                                        <input type="hidden" name="fil_id" value="{{$.IdFil}}">
+                                        <button class="{{if eq .User_c.Id (index $.Data 0).User_c.Id}}btn_bleu{{else}}btn_creme{{end}}" type="submit">Supprimer</button>
+                                    </form>    
+                                </div>
+                            </div>                                         
+                        </div>
+                        <div class="score">
+                            <form action="/message/reaction" method="POST" style="display:inline;">
+                                <input type="hidden" name="message_id" value="{{ .Id }}">
+                                <input type="hidden" name="fil_id" value="{{ $.IdFil }}">
+                                <input type="hidden" name="type_reaction" value="like">
+                                <button type="submit" class="btn_score">
+                                    <img src="/assets/img/like_{{if eq .User_c.Id (index $.Data 0).User_c.Id}}bleu{{else}}creme{{end}}.jpg" alt="Like">
+                                    <span>{{.NbLikes}}</span>
+                                </button>
+                            </form>
 
-                        <button class="btn_score">
-                            <img src="/assets/img/dislike_creme.jpg" alt="Dislike">
-                            <span>2</span> </button>
+                            <form action="/message/reaction" method="POST" style="display:inline;">
+                                <input type="hidden" name="message_id" value="{{ .Id }}">
+                                <input type="hidden" name="fil_id" value="{{ $.IdFil }}">
+                                <input type="hidden" name="type_reaction" value="dislike">
+                                <button type="submit" class="btn_score">
+                                    <img src="/assets/img/dislike_{{if eq .User_c.Id (index $.Data 0).User_c.Id}}bleu{{else}}creme{{end}}.jpg" alt="Dislike">
+                                    <span>{{.NbDislikes}}</span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-
-                {{ else }}
-                <div class="pas_rep">
-                    <p>Aucune réponse pour l'instant. Soyez le premier à répondre !</p>
-                </div>
-                {{ end }}
+                    {{ end }}
+                {{end}}
             </div>
 
-            <div></div>
+            <div class="pagination">
+                {{if gt .Page 0}}
+                <div class="gauche">
+                    <a href="/fil/{{.IdFil}}/messages?page={{.Prev}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button" title="Messages précédents">Précédent</button>
+                    </a>
+                </div>
+                {{end}}
+
+                <div class="nbr">
+                    <p>Page {{.Page}}</p>
+                </div>
+
+                {{if gt .Next .Page}}
+                <div class="droite">
+                    <a href="/fil/{{.IdFil}}/messages?page={{.Next}}&nbr_vis={{.NbrVis}}">
+                        <button class="button_search" type="button" title="Messages suivants">Suivant</button>
+                    </a>
+                </div>
+                {{end}}
+            </div>
+            <div class="reply-section">
+                <h3>Participer à la discussion</h3>
+                <form action="/fil/{{.IdFil}}/messages" method="POST">
+                    <div class="form-group">
+                        <textarea name="contenu" id="contenu" rows="5" required 
+                            placeholder="Écrivez votre message de réponse ici..."></textarea>
+                    </div>
+                    <button class="button_search" type="submit">Envoyer le message</button>
+                </form>
+            </div>
         </div>
-
-
     </main>
+    <script src="/assets/js/script.js"></script>
 </body>
-
 </html>
 {{end}}
