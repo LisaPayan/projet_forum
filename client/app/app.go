@@ -31,7 +31,7 @@ func InitApp() *App {
 
 	filController := controllers.InitFilController(filService, templatesManager)
 	authController := controllers.InitAuthController(authService, templatesManager)
-	cookiesController := controllers.InitCookiesController()
+	// cookiesController := controllers.InitCookiesController()
 
 	router := mux.NewRouter()
 
@@ -44,7 +44,7 @@ func InitApp() *App {
 	routers.RegisterAssetsRoutes(router)
 	routers.RegisterProductRoutes(router, filController)
 	routers.RegisterAuthRoutes(router, authController)
-	routers.RegisterCookiesRoutes(router, cookiesController)
+	// routers.RegisterCookiesRoutes(router, cookiesController)
 
 	return &App{
 		Router: router,

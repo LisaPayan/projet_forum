@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"client/config"
 	"client/services"
 	"client/templates"
 	"encoding/json"
@@ -43,8 +44,9 @@ func (c *AuthControllers) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   config.GetEnvWithDefault("COOKIE_SECURE", "false") == "true",
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   24 * 60 * 60,
+		MaxAge:   15 * 60,
 	})
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -59,6 +61,7 @@ func (c *AuthControllers) Logout(w http.ResponseWriter, r *http.Request) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   config.GetEnvWithDefault("COOKIE_SECURE", "false") == "true",
 		SameSite: http.SameSiteLaxMode,
 		MaxAge:   -1,
 	})
