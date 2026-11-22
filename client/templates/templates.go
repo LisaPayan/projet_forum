@@ -31,7 +31,7 @@ func (tm *TemplateManager) load() {
 }
 
 // RenderTemplate exécute le template demandé et envoie le résultat HTTP au client.
-func (tm *TemplateManager) RenderTemplate(w http.ResponseWriter, r *http.Request, name string, data interface{}) {
+func (tm *TemplateManager) RenderTemplateWithStatus(w http.ResponseWriter, r *http.Request, status int, name string, data interface{}) {
 	var buffer bytes.Buffer
 	if tm.templates == nil {
 		http.Error(w, "Templates non initialises", http.StatusInternalServerError)
@@ -43,6 +43,10 @@ func (tm *TemplateManager) RenderTemplate(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
 		return
 	}
-
+	w.WriteHeader(status)
 	buffer.WriteTo(w)
+}
+
+func (tm *TemplateManager) RenderTemplate(w http.ResponseWriter, r *http.Request, name string, data interface{}) {
+	tm.RenderTemplateWithStatus(w, r, http.StatusOK, name, data)
 }
