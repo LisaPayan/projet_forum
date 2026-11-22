@@ -4,15 +4,18 @@ import (
 	"log"
 	"net/http"
 	"projet_forum/app"
+	"projet_forum/config"
 )
 
 func main() {
 	app := app.InitApp()
 	defer app.Close()
 
+	port := config.GetEnvWithDefault("PORT", "8080")
+
 	// Lancement du serveur
-	log.Printf("Serveur lancé : http://localhost:8080")
-	serveErr := http.ListenAndServe(":8080", app.Router)
+	log.Printf("Serveur lancé : http://localhost:%s", port)
+	serveErr := http.ListenAndServe(":"+port, app.Router)
 	if serveErr != nil {
 		log.Fatalf("Erreur lancement serveur - %s", serveErr.Error())
 	}

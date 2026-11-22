@@ -7,6 +7,7 @@ import (
 	"client/routers"
 	"client/services"
 	"client/templates"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -33,6 +34,13 @@ func InitApp() *App {
 	cookiesController := controllers.InitCookiesController()
 
 	router := mux.NewRouter()
+
+	// Route de supervision utilisee pour verifier que l'application repond.
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	}).Methods(http.MethodGet)
+
 	routers.RegisterAssetsRoutes(router)
 	routers.RegisterProductRoutes(router, filController)
 	routers.RegisterAuthRoutes(router, authController)
