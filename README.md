@@ -1,6 +1,6 @@
 # ☀️ Soulèu — Forum communautaire provençale sous le soleil
 
-**Soulèu** (*Soleil* en provençal) est une plateforme de discussion et d'entraide communautaire dédiée aux personnes qui veulent soutenir la culture et les loisirs du Sud : la pétanque, la cuisine provençale et la nature. Inspiré de Reddit et Discord, ce projet inclu de nombreuses fonctionnalités.
+**Soulèu** (*Soleil* en provençal) est une plateforme de discussion et d'entraide communautaire dédiée aux personnes qui veulent soutenir la culture et les loisirs du Sud : la pétanque, la cuisine provençale et la nature. Inspiré de Reddit et Discord, ce projet inclut de nombreuses fonctionnalités.
 
 Ce projet s'inscrit dans le cadre de la validation de la première année de Bachelor Informatique (2026).
 
@@ -15,10 +15,12 @@ Ce projet s'inscrit dans le cadre de la validation de la première année de Bac
 ## Technologies utilisées
 
 * **Backend, Frontend & Logique :** Golang
-* **Base de données :** SQL
+* **Base de données :** MySQL
 * **Templates :** HTML5
 * **Esthétique :** CSS et JavaScript
-* **Sécurité :** Tokens JWT (JSON Web Tokens) pour les sessions et Hashage SHA-512 pour les mots de passe
+* **Sécurité :** Tokens JWT (JSON Web Tokens) pour les sessions et hachage SHA-512 pour les mots de passe
+* **Hébergement :** Scalingo (deux applications Go + addon MySQL)
+* **Intégration continue :** GitHub Actions
 
 ---
 
@@ -160,7 +162,7 @@ L'ensemble des fonctionnalités obligatoires décrites ci-dessous a été intég
   * Un administrateur peut agir sur un fil ou un message même s’il n’en est pas le propriétaire/auteur.
   * Un utilisateur banni ne doit plus pouvoir accéder aux fonctionnalités nécessitant une authentification.
 
-  ---
+---
 
 ## Architecture du Projet
 
@@ -180,7 +182,8 @@ PROJET_FORUM/
 │   ├── routers/             # Définition des routes de l'interface graphique
 │   ├── services/            # Traitements spécifiques à l'expérience utilisateur
 │   ├── templates/           # Vues HTML / Templates Go distribués au navigateur
-│   ├── .env                 # Variables d'environnement client
+│   ├── .env.example         # Modèle des variables d'environnement client (le .env n'est pas versionné)
+│   ├── Procfile             # Commande de démarrage sur Scalingo
 │   ├── main.go              # Point d'entrée du serveur web frontal (Client)
 │   └── go.mod               # Dépendances du module client
 │
@@ -190,23 +193,27 @@ PROJET_FORUM/
     ├── controllers/         # Contrôleurs HTTP de l'API (FT-1 à FT-12)
     ├── dto/                 # Data Transfer Objects pour valider les requêtes de l'API
     ├── helper/              # Fonctions utilitaires partagées
-    ├── middleware/          # Sécurité, validation JWT, gestion CORS et logs
-    ├── migration/           # Scripts d'initialisation et d'évolution de la base SQL
+    ├── middleware/          # Validation JWT et journalisation des requêtes
+    ├── migration/           # script.sql (création locale), scalingo.sql (création en production), migration.sql (données)
     ├── models/              # Définition des entités de la base de données (User, Fil, Message)
     ├── repositories/        # Couche d'accès aux données (Requêtes SQL brutes ou ORM)
     ├── routers/             # Endpoints et routes de l'API REST
-    ├── services/            # Couche Métier (Règles de gestion, chiffrement SHA-512)
-    ├── .env                 # Variables d'environnement serveur (clés privées, credentials DB)
+    ├── services/            # Couche Métier (Règles de gestion, hachage SHA-512)
+    ├── .env.example         # Modèle des variables d'environnement serveur (le .env n'est pas versionné)
+    ├── Procfile             # Commande de démarrage sur Scalingo
     ├── main.go              # Point d'entrée de l'API de données (Serveur)
     └── go.mod               # Dépendances du module serveur
+
+.github/workflows/ci.yml     # Intégration continue (gofmt, go vet, go build)
 ```
-    
-    
+
+---
+
 ## Prérequis à l'installation
 
 Avant de lancer le projet, assurez-vous d'avoir installé sur votre machine :
 * **Visual Studio Code** (Environnement de développement préconisé).
-* **Go (Golang)** (v1.22+) configuré dans votre variable d'environnement PATH.
+* **Go (Golang)** (v1.25+) configuré dans votre variable d'environnement PATH.
 * **WampServer** (Serveur MySQL local).
 * **DBeaver** (Gestionnaire de base de données universel).
 
@@ -224,39 +231,41 @@ Avant de lancer le projet, assurez-vous d'avoir installé sur votre machine :
 1. Démarrez **WampServer** sur votre ordinateur et attendez que l'icône de la barre des tâches devienne **verte** (signifiant que MySQL et Apache tournent correctement).
 2. Ouvrez **DBeaver**.
 3. Créez une nouvelle connexion vers votre base locale : sélectionnez **MySQL**, configurez l'hôte sur `localhost` ou `127.0.0.1`, utilisez le nom d'utilisateur `root` et laissez le champ mot de passe complètement vide (configuration classique locale).
-4. Faites un clic droit sur vos connexions et créez une nouvelle base de données nommée **`souleu_db`**.
-5. Allez dans le dossier `server/migration/` depuis l'explorateur de VS Code, copiez l'intégralité du contenu des scripts SQL présents (`.sql`) qui contiennent les définitions de tables et d'insertions.
-6. De retour sur DBeaver, ouvrez un nouvel **Éditeur SQL** rattaché à votre base `souleu_db`, collez le script complet et cliquez sur le bouton d'exécution générale (**Execute SQL Script** / `Alt + X`). Vos tables (*users*, *threads*, *messages*, *reactions*, *tags*, etc.) sont prêtes !
+4. Ouvrez un nouvel **Éditeur SQL** sur cette connexion, collez le contenu de `server/migration/script.sql` et exécutez-le (**Execute SQL Script** / `Alt + X`). Ce script crée la base **`forum_souleu`** et ses tables (*users*, *fils*, *messages*, *reactions*, *tags*).
+5. Faites de même avec `server/migration/migration.sql` pour insérer les données de démonstration.
 
 ### Étape 3 : Fichiers de Configuration (.env)
-1. Dans le dossier `server/`, créez un fichier nommé `.env` à la racine de ce sous-répertoire et collez-y les accès suivants :
+Les fichiers `.env` ne sont pas versionnés : partez des modèles `.env.example`.
+
+1. Dans le dossier `server/`, créez un fichier `.env` :
    ```env
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_USER=root
-   DB_PASSWORD=
-   DB_NAME=souleu_db
-   JWT_SECRET=votre_super_cle_secrete_jwt_sha512_pour_souleu
+   DB_PWD=
+   DB_NAME=forum_souleu
+   JWT_SECRET=une_cle_secrete_locale
+   PORT=8080
    ```
+2. Dans le dossier `client/`, créez un fichier `.env` :
+   ```env
+   BASE_URL=http://localhost:8080/api
+   PORT=3000
+   COOKIE_SECURE=false
+   ```
+
+Le fichier `.env` est facultatif : si les variables sont définies dans le terminal, l'application démarre sans lui. Le serveur refuse de démarrer si `JWT_SECRET` ou une variable de connexion à la base est absente.
 
 ---
 ### Étape 4 : Téléchargement, installation des paquets et Lancement simultané
-Pour lancer l'ensemble, ouvrez le terminal intégré de VS Code (`Ctrl + \`` ou via le menu **Terminal** > **Nouveau Terminal**).
+Pour lancer l'ensemble, ouvrez le terminal intégré de VS Code (menu **Terminal** > **Nouveau Terminal**).
 
 #### Action 1 : Installer l'intégralité des paquets et lancer le Serveur (API)
 Dans le premier onglet du terminal dédié au backend, exécutez les commandes suivantes :
 ```bash
 cd server
-
 go mod tidy
-
-go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  
-go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)         
-go get [github.com/joho/godotenv](https://github.com/joho/godotenv)               
-go get [github.com/golang-jwt/jwt/v5](https://github.com/golang-jwt/jwt/v5)           
-go get filippo.io/edwards25519             
-go get golang.org/x/text                       
-go run main.go
+go run .
 ```
 
 #### Action 2 : Installer l'intégralité des paquets et lancer le Client (Interface Front)
@@ -264,17 +273,8 @@ Cliquez sur le bouton **`+`** en haut à droite de l'espace terminal de VS Code 
 
 ```bash
 cd client
-
-
 go mod tidy
-
-go get [github.com/gorilla/mux](https://github.com/gorilla/mux)                  
-go get [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql)         
-go get [github.com/joho/godotenv](https://github.com/joho/godotenv)    
-go get filippo.io/edwards25519                
-go get golang.org/x/text                     
-
-go run main.go
+go run .
 ```
 
 > **Accès à l'Interface Utilisateur :** Une fois les deux terminaux lancés, ouvrez votre navigateur internet et rendez-vous sur **`http://localhost:3000`** pour charger l'interface visuelle de **Soulèu** et naviguer sur la plateforme.
@@ -286,6 +286,10 @@ go run main.go
 L'application distribue ses interfaces utilisateur et ses formulaires sur le port `3000` via le routeur **Gorilla Mux**. Voici la liste complète des adresses disponibles pour naviguer sur la plateforme :
 
 ### Vues Publiques (Accessibles par tous)
+* **`GET http://localhost:3000/login`** / **`POST /login`** : Formulaire et traitement de la connexion.
+* **`GET http://localhost:3000/register`** / **`POST /register`** : Formulaire et traitement de l'inscription.
+* **`GET http://localhost:3000/logout`** : Déconnexion (suppression du cookie de session).
+* **`GET http://localhost:3000/health`** : Vérification que l'application répond (code 200).
 * **`GET http://localhost:3000/`** : Page d'accueil principale avec affichage de la liste des fils.
 * **`GET http://localhost:3000/all`** : Flux global affichant l'intégralité des fils avec gestion de la pagination générale.
 * **`GET http://localhost:3000/fils/petanque`** : Espace thématique dédié à la pétanque avec pagination.
@@ -313,3 +317,162 @@ L'application distribue ses interfaces utilisateur et ses formulaires sur le por
 * **`GET http://localhost:3000/message/edit`** : Accès au formulaire d'édition d'un message spécifique.
 * **`POST http://localhost:3000/message/update`** : Validation et modification du texte d'un message.
 * **`POST http://localhost:3000/message/delete`** : Suppression d'un message et de ses réactions rattachées.
+
+#### Administration
+* **`GET http://localhost:3000/dashboard`** : Tableau de bord d'administration (réservé aux administrateurs).
+
+> Toute autre adresse affiche la page 404 du forum avec le code HTTP 404.
+
+---
+
+## Déploiement en production (Scalingo)
+
+### Liens
+* **Application :** https://forum-client.osc-fr1.scalingo.io
+* **Santé du front :** https://forum-client.osc-fr1.scalingo.io/health
+* **Santé de l'API :** https://forum-server.osc-fr1.scalingo.io/health
+
+### Architecture de déploiement
+
+```text
+Navigateur ──HTTPS──▶ forum-client (Go, pages HTML)
+                          │  appels HTTP côté serveur (BASE_URL)
+                          ▼
+                      forum-server (Go, API JSON sous /api)
+                          │
+                          ▼
+                      MySQL (addon Scalingo, Starter 512)
+```
+
+* Le dépôt contient **deux modules Go** (`client/` et `server/`). Ils sont déployés comme **deux applications Scalingo** à partir du même dépôt, grâce à la variable `PROJECT_DIR` qui indique le sous-dossier à déployer.
+* Le front appelle l'API **depuis le serveur Go** et non depuis le navigateur : aucune configuration CORS n'est nécessaire.
+* Seule l'API accède à la base de données.
+* Chaque sous-dossier contient un `Procfile` (`web: client` et `web: projet_forum`, le nom du module défini dans `go.mod`).
+* Les deux applications répondent sur `GET /health` (code 200).
+
+### Variables d'environnement
+
+| Variable | Application | Rôle |
+|---|---|---|
+| `PROJECT_DIR` | les deux | Sous-dossier à déployer (`client` ou `server`) |
+| `PORT` | les deux | Port d'écoute, fourni automatiquement par Scalingo (valeur par défaut en local) |
+| `DB_HOST` | forum-server | Hôte MySQL |
+| `DB_PORT` | forum-server | Port MySQL |
+| `DB_USER` | forum-server | Utilisateur MySQL |
+| `DB_PWD` | forum-server | Mot de passe MySQL |
+| `DB_NAME` | forum-server | Nom de la base |
+| `JWT_SECRET` | forum-server | Clé de signature des jetons JWT (obligatoire, le serveur refuse de démarrer sans) |
+| `BASE_URL` | forum-client | Adresse de l'API (ex. `https://forum-server.osc-fr1.scalingo.io/api`) |
+| `COOKIE_SECURE` | forum-client | `true` en production : le cookie de session n'est envoyé qu'en HTTPS |
+
+Les valeurs ne sont jamais versionnées : elles sont définies dans l'onglet *Environment* du dashboard Scalingo (ou avec `scalingo env-set`). Les fichiers `.env.example` listent les variables attendues.
+
+### Procédure de déploiement reproductible
+
+1. **Créer les applications** `forum-server` et `forum-client` (dashboard ou `scalingo create`).
+2. **Ajouter la base** à l'API :
+   ```bash
+   scalingo --app forum-server addons-add mysql mysql-starter-512
+   scalingo --app forum-server env-get SCALINGO_MYSQL_URL
+   ```
+   L'adresse a la forme `mysql://UTILISATEUR:MOTDEPASSE@HOTE:PORT/BASE?...` : chaque morceau est reporté dans les variables `DB_*`.
+3. **Définir les variables** :
+   ```bash
+   scalingo --app forum-server env-set PROJECT_DIR=server DB_HOST=... DB_PORT=... DB_USER=... DB_PWD=... DB_NAME=... JWT_SECRET=...
+   scalingo --app forum-client env-set PROJECT_DIR=client BASE_URL=https://forum-server.osc-fr1.scalingo.io/api COOKIE_SECURE=true
+   ```
+4. **Créer les tables** : ouvrir `scalingo --app forum-server mysql-console` et coller le contenu de `server/migration/scalingo.sql` (version du script sans `DROP DATABASE` / `CREATE DATABASE` / `USE`, interdits sur Scalingo).
+5. **Insérer les données initiales** (tags, etc.) : coller les `INSERT` de `server/migration/migration.sql`, sans le `USE` ni les `TRUNCATE`.
+6. **Lier les deux applications au dépôt GitHub** et activer l'**Auto Deploy** sur la branche `main`.
+7. **Forcer HTTPS** sur les deux applications (onglet *Settings* ou `scalingo --app <app> force-https`).
+
+### Déploiement continu
+
+* À chaque push et pull request, la GitHub Action `.github/workflows/ci.yml` lance, pour `client` et `server` : `gofmt -l`, `go vet ./...` et `go build ./...`.
+* La CI n'est pas relancée pour les modifications de documentation seules (`paths-ignore: '**.md'`).
+* Scalingo attend que les GitHub Actions soient vertes avant de lancer un déploiement automatique : un code qui ne compile pas n'atteint pas la production.
+* Un push (ou une fusion de pull request) sur `main` suffit à mettre en ligne, sans action manuelle.
+
+### Sécurité
+
+* HTTPS forcé : `http://` redirige vers `https://`.
+* Cookie de session `access_token` : `HttpOnly`, `Secure` en production, `SameSite=Lax`, durée de 15 minutes alignée sur l'expiration du JWT.
+* Secrets lus uniquement depuis l'environnement.
+* Une URL inconnue renvoie la page 404 du forum avec le code HTTP 404.
+* Chaque requête est journalisée (méthode, chemin, code, durée), sans mot de passe ni token.
+
+### Coût mensuel
+
+| Ressource | Quantité | Prix unitaire (HT / mois) | Total |
+|---|---|---|---|
+| Conteneur S (256 Mo) | 2 | 7,20 € | 14,40 € |
+| MySQL Starter 512 | 1 | 7,20 € | 7,20 € |
+| **Total estimé** | | | **21,60 € HT** |
+
+* **Consommation observée** (onglet *Metrics* / `scalingo stats`) : environ 3 Mo de mémoire au repos et un pic à 15 Mo par application, CPU proche de 0 %. La taille S (256 Mo) suffit largement.
+* Les applications ont d'abord tourné en taille M (512 Mo, 14,40 € / mois chacune), soit 36 € HT / mois avec la base, avant d'être réduites en S.
+* **Coût réel :** Scalingo facture à l'heure (0,01 € / h pour un conteneur S, 0,02 € / h pour un M). La consommation mesurée (pic à 15 Mo de mémoire par application, CPU proche de 0 %) a permis de passer les conteneurs de M à S : le coût réel de l'hébergement en production est donc de **21,60 € HT / mois**, conforme à l'estimation, au lieu de 36 € HT / mois avec la configuration initiale.
+
+---
+
+## En cas de panne
+
+Les commandes ci-dessous ont été testées sur le projet. Elles sont écrites pour **Git Bash**.
+
+### Lire les logs
+```bash
+scalingo --app forum-client logs --lines 200
+scalingo --app forum-server logs --lines 200
+scalingo --app forum-server --addon mysql logs --lines 200   # logs de la base
+```
+Chaque requête apparaît sous la forme `GET /fil/1/messages 200 5ms`. Au démarrage, l'API affiche `BDD - Connexion reussie` puis `Serveur lancé`.
+
+### Exemple de panne diagnostiquée
+* **Cause provoquée :** un template HTML cassé (`{{end` non fermé dans `404.html`).
+* **CI :** verte, car `go build` ne lit pas les templates.
+* **Symptôme :** le déploiement du front passe en `crashed-error` dans l'onglet *Deployments*.
+* **Diagnostic :** `scalingo --app forum-client logs --lines 50` montre `Erreur template - ...` (le chargement des templates échoue au démarrage).
+* **Effet :** Scalingo conserve la version précédente en ligne ; le site n'a pas été interrompu.
+
+### Revenir à un déploiement précédent (rollback)
+```bash
+git checkout main
+git pull
+git log --oneline -5                # repérer le commit de merge fautif
+git revert -m 1 <id-du-merge>
+git push origin main                # CI verte puis redéploiement automatique
+```
+Si une application ne se redéploie pas automatiquement :
+```bash
+scalingo --app forum-client integration-link-manual-deploy main
+```
+(ou bouton *Trigger deployment* dans l'onglet *Deploy* du dashboard)
+
+### Sauvegarder la base
+```bash
+scalingo --app forum-server --addon mysql backups-create
+scalingo --app forum-server --addon mysql backups            # vérifier le statut "done"
+scalingo --app forum-server --addon mysql backups-download
+tar -xzf <fichier>.tar.gz                                    # donne un fichier .sql
+```
+Les sauvegardes contiennent des données personnelles : elles sont conservées **hors du dépôt** (`*.tar.gz` et `/*.sql` sont dans le `.gitignore`).
+
+### Restaurer la base
+1. Retirer du fichier `.sql` les lignes `CREATE DATABASE ...` et `USE ...` (l'utilisateur Scalingo n'a pas le droit de créer de base) :
+   ```bash
+   grep -vE "^CREATE DATABASE|^USE " <fichier>.sql > restore.sql
+   ```
+2. **Terminal 1** : ouvrir un tunnel vers la base (à laisser ouvert). La clé SSH enregistrée sur le compte Scalingo doit être précisée avec `-i` si elle ne s'appelle pas `id_rsa` :
+   ```bash
+   scalingo --app forum-server db-tunnel -i ~/.ssh/id_ed25519 SCALINGO_MYSQL_URL
+   ```
+3. **Terminal 2** : envoyer le dump avec le client MySQL (ici celui de WAMP). Sous Git Bash, l'invite de mot de passe de `mysql.exe` ne fonctionne pas : le mot de passe est passé par la variable `MYSQL_PWD`.
+   ```bash
+   export MYSQL_PWD="$(scalingo --app forum-server env-get DB_PWD)"
+   "/c/wamp64/bin/mysql/mysql8.4.7/bin/mysql.exe" -h 127.0.0.1 -P 10000 \
+       -u "$(scalingo --app forum-server env-get DB_USER)" \
+       "$(scalingo --app forum-server env-get DB_NAME)" < restore.sql
+   unset MYSQL_PWD
+   ```
+4. **Vérification :** un fil créé après la sauvegarde a bien disparu après la restauration.
+5. Fermer le tunnel avec `Ctrl + C`.
