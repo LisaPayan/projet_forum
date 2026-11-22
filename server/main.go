@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"projet_forum/app"
 	"projet_forum/config"
+	"projet_forum/middleware"
 )
 
 func main() {
@@ -15,7 +16,7 @@ func main() {
 
 	// Lancement du serveur
 	log.Printf("Serveur lancé : http://localhost:%s", port)
-	serveErr := http.ListenAndServe(":"+port, app.Router)
+	serveErr := http.ListenAndServe(":"+port, middleware.LoggingMiddleware(app.Router))
 	if serveErr != nil {
 		log.Fatalf("Erreur lancement serveur - %s", serveErr.Error())
 	}
