@@ -46,6 +46,10 @@ func InitApp() *App {
 	routers.RegisterAuthRoutes(router, authController)
 	// routers.RegisterCookiesRoutes(router, cookiesController)
 
+	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		templatesManager.RenderTemplateWithStatus(w, r, http.StatusNotFound, "404", nil)
+	})
+
 	return &App{
 		Router: router,
 	}
