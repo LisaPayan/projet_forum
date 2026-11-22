@@ -3,11 +3,18 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"projet_forum/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
+
+// jwtSecret est la cle de signature des JWT, chargee une seule fois au demarrage via Init.
+var jwtSecret []byte
+
+// Init enregistre la cle de signature des JWT. Elle doit etre appelee au demarrage.
+func Init(secret string) {
+	jwtSecret = []byte(secret)
+}
 
 type Claims struct {
 	UserID string `json:"user_id"`
@@ -18,7 +25,9 @@ type Claims struct {
 
 func GenerateToken(userID string, role string, isBan int) (string, error) {
 	now := time.Now()
-	secret := []byte(config.GetEnvWithDefault("JWT_SECRET", "secret_forum"))
+	if len(jwtSecret) == 0 {
+		return "", errors.New("JWT secret non initialise")
+	}
 
 	claims := Claims{
 		UserID: userID,
@@ -35,12 +44,14 @@ func GenerateToken(userID string, role string, isBan int) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(secret)
+	return token.SignedString(jwtSecret)
 }
 
 // ValidateToken verifie un JWT et retourne ses informations si le token est valide.
 func ValidateToken(tokenString string) (*Claims, error) {
-	secret := []byte(config.GetEnvWithDefault("JWT_SECRET", "secret_forum"))
+	if len(jwtSecret) == 0 {
+		return nil, errors.New("JWT secret non initialise")
+	}
 	// Claims recevra les donnees decodees depuis le token.
 	claims := &Claims{}
 
@@ -57,7 +68,7 @@ func ValidateToken(tokenString string) (*Claims, error) {
 				)
 			}
 			// Cette cle doit etre la meme que celle utilisee pour signer le token.
-			return secret, nil
+			return jwtSecret, nil
 		},
 		// Ces options garantissent que le token vient de l'API attendue
 		// et qu'il est destine au bon client.

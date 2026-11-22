@@ -1,0 +1,9 @@
+# Variables d'environnement (secrets)
+.env
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

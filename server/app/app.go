@@ -3,6 +3,7 @@ package app
 import (
 	"database/sql"
 	"net/http"
+	"projet_forum/auth"
 	"projet_forum/config"
 	"projet_forum/controllers"
 	"projet_forum/helper"
@@ -21,6 +22,9 @@ type App struct {
 func InitApp() *App {
 	config.LoadEnv()
 
+	// Le serveur refuse de demarrer si le secret JWT est absent.
+	auth.Init(config.GetRequiredEnv("JWT_SECRET"))
+
 	db := config.InitDB()
 
 	// Initialisation des repositories
@@ -35,8 +39,15 @@ func InitApp() *App {
 	filController := controllers.InitFilController(filService)
 	authController := controllers.InitAuthController(authService)
 
+	rootRouter := mux.NewRouter()
+
+	// Route de supervision utilisee pour verifier que l'application repond.
+	rootRouter.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		helper.WriteJSON(w, http.StatusOK, "ok")
+	}).Methods(http.MethodGet)
+
 	// Enregistrement des routes avec le prefixe /api
-	router := mux.NewRouter().PathPrefix("/api").Subrouter()
+	router := rootRouter.PathPrefix("/api").Subrouter()
 
 	routers.RegisterFilRoutes(router, filController)
 	routers.AuthRoutes(router, authController)
@@ -46,7 +57,7 @@ func InitApp() *App {
 
 	return &App{
 		Db:     db,
-		Router: router,
+		Router: rootRouter,
 	}
 }
 
