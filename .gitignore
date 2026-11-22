@@ -7,3 +7,8 @@
 *.swp
 .DS_Store
 Thumbs.db
+
+# Sauvegardes de la base (contiennent des donnees utilisateurs)
+*.tar.gz
+backups/
+/*.sql
