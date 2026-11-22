@@ -20,7 +20,6 @@ func InitAuthController(authService *services.AuthService) *AuthController {
 }
 
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("test")
 	contentType := r.Header.Get("Content-Type")
 
 	if !strings.Contains(contentType, "application/json") {
@@ -69,6 +68,5 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 func (c *AuthController) Me(w http.ResponseWriter, r *http.Request) {
 	claims, _ := r.Context().Value("user").(*auth.Claims)
 
-	fmt.Println(claims)
 	helper.WriteJSON(w, http.StatusOK, fmt.Sprintf("Hello %v , u are %v", claims.UserID, claims.Role))
 }

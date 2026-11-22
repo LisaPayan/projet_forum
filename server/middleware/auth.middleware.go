@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 	"projet_forum/auth"
 	"projet_forum/helper"
@@ -30,7 +30,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// On valide le token et on recupere les claims de l'utilisateur.
 		claims, err := auth.ValidateToken(parts[1])
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("Token invalide : %v", err)
 			helper.WriteError(w, http.StatusUnauthorized, "invalid token")
 			return
 		}
