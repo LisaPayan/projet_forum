@@ -4,7 +4,6 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"net/http"
 	"projet_forum/auth"
 	"projet_forum/dto"
@@ -25,7 +24,6 @@ func InitAuthService(authRepository *repositories.AuthRepository) *AuthService {
 func (s *AuthService) Register(data dto.RegisterRequestDto) (*dto.RegisterResponseDto, error) {
 	data.Pseudo = strings.TrimSpace(data.Pseudo)
 	data.Email = strings.TrimSpace(data.Email)
-	fmt.Println(data)
 
 	if data.Pseudo == "" || data.Email == "" || data.Password == "" {
 		return nil, errors.New("tous les champs sont obligatoires")

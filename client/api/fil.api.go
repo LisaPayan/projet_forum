@@ -143,7 +143,6 @@ func (api *FilApi) ReadByIdMessages(id int, tri string) ([]dto.MessageDto, error
 		}
 		return nil, err
 	}
-	fmt.Println(messages)
 	return messages, nil
 }
 
@@ -158,7 +157,6 @@ func (api *FilApi) FilsPetanque() ([]dto.FilDto, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(list)
 	return list, nil
 }
 
@@ -173,7 +171,6 @@ func (api *FilApi) FilsCuisine() ([]dto.FilDto, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(list)
 	return list, nil
 }
 
@@ -188,7 +185,6 @@ func (api *FilApi) FilsNature() ([]dto.FilDto, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(list)
 	return list, nil
 }
 

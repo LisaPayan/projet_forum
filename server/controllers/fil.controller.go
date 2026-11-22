@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"projet_forum/auth"
 	"projet_forum/helper"
@@ -106,7 +105,6 @@ func (c *FilControllers) ReadAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteJSON(w, http.StatusOK, filsList)
-	fmt.Println(filsList)
 }
 
 func (c *FilControllers) GetMessagesByFil(w http.ResponseWriter, r *http.Request) {
@@ -130,7 +128,6 @@ func (c *FilControllers) GetMessagesByFil(w http.ResponseWriter, r *http.Request
 	}
 
 	helper.WriteJSON(w, http.StatusOK, messagesList)
-	fmt.Println(messagesList)
 
 }
 
@@ -142,7 +139,6 @@ func (c *FilControllers) FilsPetanque(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteJSON(w, http.StatusOK, filsList)
-	fmt.Println(filsList)
 }
 
 func (c *FilControllers) FilsCuisine(w http.ResponseWriter, r *http.Request) {
@@ -153,7 +149,6 @@ func (c *FilControllers) FilsCuisine(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteJSON(w, http.StatusOK, filsList)
-	fmt.Println(filsList)
 }
 
 func (c *FilControllers) FilsNature(w http.ResponseWriter, r *http.Request) {
@@ -164,7 +159,6 @@ func (c *FilControllers) FilsNature(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.WriteJSON(w, http.StatusOK, filsList)
-	fmt.Println(filsList)
 }
 
 func (c *FilControllers) AjoutReaction(w http.ResponseWriter, r *http.Request) {

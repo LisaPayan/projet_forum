@@ -34,7 +34,6 @@ func (c *FilControllers) DisplayList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c.template.RenderTemplate(w, r, "menu", filsList)
-	fmt.Println(filsList)
 }
 
 // func (c *FilControllers) DisplayMessagesFil(w http.ResponseWriter, r *http.Request) {
